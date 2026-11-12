@@ -18,7 +18,7 @@
 :root{
   --ink:#0c1015;
   --glass:rgba(8,11,15,.5);
-  --bg2:rgba(255,255,255,.055);
+  --bg2:rgba(14,18,24,.42);
   --bg3:rgba(255,255,255,.1);
   --line:rgba(255,255,255,.08);
   --fill:rgba(255,255,255,.1);
@@ -38,7 +38,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
 body{background:#07090c;color:var(--label);font-family:var(--font);font-size:15px;letter-spacing:-.15px;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,9,13,.35),rgba(6,9,13,.6)),url(bg.jpg) 50% 45%/cover no-repeat}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,9,13,.42) 0%,rgba(6,9,13,.12) 30%,rgba(6,9,13,.2) 60%,rgba(6,9,13,.55) 100%),url(bg.jpg) 50% 45%/cover no-repeat}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:40;opacity:.09;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0;letter-spacing:inherit}
@@ -46,10 +46,10 @@ input,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .num{font-variant-numeric:tabular-nums}
 .app{max-width:480px;margin:calc(env(safe-area-inset-top) + 10px) auto 0;min-height:calc(100vh - env(safe-area-inset-top) - 10px);
   padding:4px 16px calc(env(safe-area-inset-bottom) + 120px);
-  background:var(--glass);border:1px solid var(--line);border-bottom:0;border-radius:28px 28px 0 0;
+  background:none;border:0;border-radius:0;
   backdrop-filter:blur(26px) saturate(110%);-webkit-backdrop-filter:blur(26px) saturate(110%);
-  box-shadow:0 30px 80px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06)}
-@media (min-width:520px){.app{margin:28px auto;min-height:auto;border-radius:28px;border-bottom:1px solid var(--line);padding-bottom:110px}}
+  box-shadow:none}
+@media (min-width:520px){.app{margin:28px auto;min-height:auto;padding-bottom:110px}}
 
 .bar{position:fixed;top:0;left:0;right:0;z-index:9;padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;text-align:center;font-weight:500;font-size:15px;
   background:rgba(12,15,20,.6);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-bottom:1px solid var(--line);opacity:0;pointer-events:none;transition:opacity .25s}
@@ -289,6 +289,12 @@ textarea.field{height:auto;min-height:96px;padding:14px 0;resize:none;line-heigh
 .backup .tx small{display:block;color:var(--label2);font-size:12px;margin-top:2px}
 .backup .b{height:34px;padding:0 14px;border-radius:17px;font-size:13px;font-weight:600;background:#e4eaf0;color:#0c1015;flex:none}
 .backup .l{height:34px;padding:0 6px;font-size:13px;color:var(--label2);flex:none}
+
+/* frosted cards over the visible photo */
+.app{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.card,.tile,.list{backdrop-filter:blur(22px) saturate(125%);-webkit-backdrop-filter:blur(22px) saturate(125%);border-color:rgba(255,255,255,.12);box-shadow:0 8px 30px rgba(0,0,0,.18)}
+.sheet .list{backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
+.top,.sec,.cap,.foot,.weeknav{text-shadow:0 1px 12px rgba(0,0,0,.45)}
 </style>
 </head>
 <body>
