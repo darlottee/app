@@ -275,6 +275,20 @@ textarea.field{height:auto;min-height:96px;padding:14px 0;resize:none;line-heigh
 .toast.show{transform:translate(-50%,0)}
 .fade{animation:fade .5s cubic-bezier(.32,.72,0,1)}
 @keyframes fade{from{opacity:0;transform:translateY(6px);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+
+.tile .act.tp{background:#e4eaf0;color:#0c1015}
+.tile .act.tp svg{width:13px;height:13px}
+.tile.running{box-shadow:inset 0 0 0 1.5px rgba(228,234,240,.55)}
+.tile.running .act.tp{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(228,234,240,.12)}}
+.tile .tnum{font-size:28px!important;color:var(--label)!important;margin:0!important;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.tile .tman{display:inline-block;margin-top:8px;font-size:11px;color:var(--label3);text-decoration:underline;text-underline-offset:2px}
+.backup{display:flex;flex-direction:column;gap:12px}
+.backup .bb{display:flex;justify-content:flex-end;gap:8px}
+.backup .tx{flex:1;font-size:14px;line-height:19px}
+.backup .tx small{display:block;color:var(--label2);font-size:12px;margin-top:2px}
+.backup .b{height:34px;padding:0 14px;border-radius:17px;font-size:13px;font-weight:600;background:#e4eaf0;color:#0c1015;flex:none}
+.backup .l{height:34px;padding:0 6px;font-size:13px;color:var(--label2);flex:none}
 </style>
 </head>
 <body>
@@ -356,6 +370,8 @@ const OLD = {'#0a84ff':'#7d9cc0','#30d158':'#a7c3d8','#ff9f0a':'#b4bcc4','#ff375
   '#8ea6bf':'#7d9cc0','#7f93ad':'#4f6f96','#93b2b4':'#a7c3d8','#a4a6c6':'#848d97','#aec4d4':'#a7c3d8','#8189ab':'#4a525c','#9cb5ad':'#b4bcc4','#a9b2bc':'#e4e9ee'};
 const ic = n => sv(ICONS[n] || ICONS.walk);
 const I = {
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>',
   check:sv('<path d="M5 12.5l4.5 4.5L19 7.5"/>','stroke-width="3"'),
   plus:sv('<path d="M12 5v14M5 12h14"/>','stroke-width="2.4"'),
   chev:'<svg class="chev" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>',
@@ -381,6 +397,7 @@ const fixGoal = (g,i) => { if (!ICONS[g.icon]) g.icon = ICON_OLD[g.icon] || 'wal
 S.goals.forEach(fixGoal);
 const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} };
 if (!S.weeks || typeof S.weeks !== 'object') S.weeks = {};
+if (!S.secs || typeof S.secs !== 'object') S.secs = {};
 const weekRes = w => S.weeks[w] || [];
 const X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg>';
 function resCard(w, opts={}){
@@ -409,8 +426,35 @@ const setVal = (g,k,v) => {
   if (!Object.keys(S.log[k]).length) delete S.log[k];
   save();
 };
-const target = g => g.type === 'count' ? Math.max(1, +g.target || 1) : 1;
-const frac = (g,k) => Math.min(1, getVal(g,k) / target(g));
+const target = g => (g.type === 'count' || g.type === 'time') ? Math.max(1, +g.target || 1) : 1;
+const frac = (g,k) => Math.min(1, (g.type === 'time' ? elapsed(g,k)/60 : getVal(g,k)) / target(g));
+
+/* ---------- timer ---------- */
+const running = (g,k) => S.run && S.run.id === g.id && S.run.k === k;
+const elapsed = (g,k) => ((S.secs[k] && S.secs[k][g.id]) || 0) + (running(g,k) ? (Date.now() - S.run.t0)/1000 : 0);
+const mmss = sec => { sec = Math.max(0, Math.ceil(sec)); const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), x = sec%60;
+  return (h ? h + ':' + pad(m) : m) + ':' + pad(x); };
+const setSecs = (g,k,sec) => { S.secs[k] = S.secs[k] || {}; if (sec <= 0) delete S.secs[k][g.id]; else S.secs[k][g.id] = Math.round(sec);
+  if (!Object.keys(S.secs[k]).length) delete S.secs[k]; setVal(g,k, Math.floor(Math.min(sec, target(g)*60)/60)); };
+let wake = null;
+async function keepAwake(on){ try { if (on && !wake && navigator.wakeLock) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => wake = null); }
+  else if (!on && wake) { await wake.release(); wake = null; } } catch(e) {} }
+function stopTimer(credit = true){
+  if (!S.run) return; const g = S.goals.find(x => x.id === S.run.id), k = S.run.k;
+  let sec = 0; if (g && credit) { sec = elapsed(g,k); if (k < key(today())) { const end = addDays(parse(k),1).getTime(); sec = Math.min(sec, ((S.secs[k]&&S.secs[k][g.id])||0) + Math.max(0,(end - S.run.t0)/1000)); } }
+  S.run = null; if (g && credit) setSecs(g,k,sec); else save(); keepAwake(false);
+}
+function startTimer(g,k){ if (S.run) stopTimer(); S.run = { id: g.id, k, t0: Date.now() }; save(); keepAwake(true); }
+function tick(){
+  if (!S.run) return;
+  const g = S.goals.find(x => x.id === S.run.id); if (!g) { S.run = null; save(); return; }
+  const k = S.run.k, sec = elapsed(g,k), tot = target(g)*60;
+  if (k < key(today())) { stopTimer(); render(); return; }
+  if (sec >= tot) { stopTimer(); setSecs(g,k,tot); buzz(); navigator.vibrate && navigator.vibrate([20,60,20,60,40]); render(); toast('Время вышло — цель выполнена'); return; }
+  document.querySelectorAll(`[data-tt="${g.id}"]`).forEach(el => el.textContent = mmss(tot - sec));
+  document.querySelectorAll(`[data-tm="${g.id}"]`).forEach(el => el.style.width = (sec/tot*100) + '%');
+}
+setInterval(tick, 500);
 const active = (g,d) => g.date ? key(d) === g.date : (g.days[dow(d)] && key(d) >= g.created);
 const isPast = k => k < key(today());
 const dateLabel = k => { const d = parse(k), t = key(today()), tm = key(addDays(today(),1)), ys = key(addDays(today(),-1));
@@ -509,7 +553,7 @@ function home(){
         </div>
       </div>
     </div>
-    ${pend}${resNow}
+    ${backupCard()}${pend}${resNow}
     <div class="card" style="padding:14px 10px 10px">
       <div class="week-head" style="padding:0 6px"><span class="t">${weekLabel(ws)}</span><span class="s">${I.flame}${st}</span></div>
       <div class="week">${strip}</div>
@@ -526,8 +570,24 @@ function tile(g,k){
     <button class="${cls}" ${style} data-act="locked">
       <span class="act ${done?'ck':'xx'}" style="${done?`color:${g.color}`:''}">${done?I.check:X}</span>
       <div>${sq(g)}<div class="name">${esc(g.title)}</div></div>
-      <div class="sub">${done?'Выполнено':'Не выполнено'}${g.type==='count'?` · ${v} / ${target(g)} ${esc(g.unit||'')}`:''}</div>
+      <div class="sub">${done?'Выполнено':'Не выполнено'}${g.type==='count'?` · ${v} / ${target(g)} ${esc(g.unit||'')}`:''}${g.type==='time'?` · ${Math.floor(elapsed(g,k)/60)} / ${target(g)} мин`:''}</div>
     </button>`;
+  if (g.type === 'time') { const run = running(g,k), sec = elapsed(g,k), tot = target(g)*60;
+    if (done) return `
+    <button class="${cls}" ${style} data-act="treset" data-id="${g.id}" data-k="${k}">
+      <span class="act ck" style="color:${g.color}">${I.check}</span>
+      <div>${sq(g)}<div class="name">${esc(g.title)}</div></div>
+      <div class="sub">Выполнено · ${target(g)} мин</div>
+    </button>`;
+    return `
+    <button class="${cls} ${run?'running':''}" data-act="tplay" data-id="${g.id}" data-k="${k}">
+      <span class="act tp">${run ? I.pause : I.play}</span>
+      <div>${sq(g)}<div class="name">${esc(g.title)}</div></div>
+      <div><div class="val"><span class="tnum" data-tt="${g.id}">${mmss(tot - sec)}</span></div>
+      <div class="sub" style="margin-top:4px">${run ? 'идёт · нажмите для паузы' : sec > 0 ? 'пауза · осталось' : `Старт · ${target(g)} мин`}</div>
+      <div class="meter"><div data-tm="${g.id}" style="width:${sec/tot*100}%;background:${g.color}"></div></div>
+      <span class="tman" data-act="tdone" data-id="${g.id}" data-k="${k}">отметить вручную</span></div>
+    </button>`; }
   if (g.type === 'count') return `
     <button class="${cls}" ${style} data-act="inc" data-id="${g.id}" data-k="${k}">
       ${v>0?`<span class="act mn" data-act="dec" data-id="${g.id}" data-k="${k}" aria-label="Минус один">−</span>`:''}
@@ -625,7 +685,7 @@ function goals(){
   const st = g => { if (!g.date || g.date >= tk) return ''; return frac(g,g.date) >= 1 ? ' · выполнено' : ' · не выполнено'; };
   const rowOf = g => `
     <button class="row" data-act="edit" data-id="${g.id}">${sq(g)}
-      <span class="body"><div>${esc(g.title)}</div><small>${schedule(g)}${st(g)}${g.type==='count'?` · ${target(g)} ${esc(g.unit||'')}${g.date?'':' в день'}`:''}</small></span>${I.chev}
+      <span class="body"><div>${esc(g.title)}</div><small>${schedule(g)}${st(g)}${g.type==='count'?` · ${target(g)} ${esc(g.unit||'')}${g.date?'':' в день'}`:''}${g.type==='time'?` · ${target(g)} мин`:''}</small></span>${I.chev}
     </button>`;
   const upcoming = S.goals.filter(g => g.date && g.date >= tk).sort((a,b) => a.date < b.date ? -1 : 1);
   const regular = S.goals.filter(g => !g.date);
@@ -638,10 +698,10 @@ function goals(){
     ${S.goals.length?`<div style="margin-top:20px"><button class="btn tint" data-act="new">${I.plus} Новая цель</button></div>`:''}
     <div class="cap">Данные</div>
     <div class="list">
-      <button class="row plain blue" data-act="export">Экспортировать в файл</button>
-      <button class="row plain blue" data-act="import">Импортировать из файла</button>
+      <button class="row plain blue" data-act="backup">Сохранить копию</button>
+      <button class="row plain blue" data-act="import">Восстановить из копии</button>
     </div>
-    <div class="foot">Всё хранится только на этом устройстве. Экспорт поможет перенести данные на другое.</div>
+    <div class="foot">Всё хранится только на этом телефоне. «Сохранить копию» откроет меню «Поделиться» — выберите «Сохранить в Файлы» (можно в iCloud Drive). ${S.lastBackup ? `Последняя копия: ${dateLabel(S.lastBackup).toLowerCase()}.` : 'Копий ещё не было.'}</div>
   </div>`;
 }
 
@@ -673,13 +733,16 @@ function drawEditor(){
     </div>
     <div class="cap">Как отмечать</div>
     <div class="list" style="padding:12px">
-      <div class="seg"><button data-act="type" data-t="check" class="${d.type==='check'?'on':''}">Сделано / нет</button><button data-act="type" data-t="count" class="${d.type==='count'?'on':''}">Количество</button></div>
-      ${d.type==='count'?'':'<div class="foot" style="margin:10px 4px 0">Одно нажатие — и задача на день выполнена.</div>'}
+      <div class="seg"><button data-act="type" data-t="check" class="${d.type==='check'?'on':''}">Сделано / нет</button><button data-act="type" data-t="count" class="${d.type==='count'?'on':''}">Количество</button><button data-act="type" data-t="time" class="${d.type==='time'?'on':''}">По времени</button></div>
+      ${d.type==='check'?'<div class="foot" style="margin:10px 4px 0">Одно нажатие — и задача на день выполнена.</div>':''}
     </div>
     ${d.type==='count'?`<div class="list" style="margin-top:12px">
       <label class="row plain"><span class="body"><div>Цель в день</div></span><input class="rval num" id="gTarget" type="number" min="1" inputmode="numeric" value="${d.target}"></label>
       <label class="row plain"><span class="body"><div>Единица</div></span><input class="rval" id="gUnit" maxlength="12" placeholder="раз, мин, км" value="${esc(d.unit||'')}"></label>
     </div><div class="foot">Каждое нажатие на плитку прибавляет 1.</div>`:''}
+    ${d.type==='time'?`<div class="list" style="margin-top:12px">
+      <label class="row plain"><span class="body"><div>Минут в день</div></span><input class="rval num" id="gTarget" type="number" min="1" max="600" inputmode="numeric" value="${d.target}"></label>
+    </div><div class="foot">На плитке появится кнопка «Старт». Когда время выйдет, цель отметится сама. Пока таймер идёт, экран не гаснет.</div>`:''}
     <div class="cap">Когда</div>
     <div class="list" style="padding:12px">
       <div class="seg"><button data-act="mode" data-m="date" class="${d.mode==='date'?'on':''}">В определённый день</button><button data-act="mode" data-m="week" class="${d.mode==='week'?'on':''}">По дням недели</button></div>
@@ -722,6 +785,23 @@ function openResult(w, id){
   scrim.classList.add('open'); sheet.classList.add('open'); sheet.scrollTop = 0;
   if (!r) setTimeout(() => sheet.querySelector('#rText')?.focus(), 450);
 }
+async function backup(){
+  S.lastBackup = key(today()); S.bkSnooze = null;
+  const name = `shag-backup-${key(today())}.json`, text = JSON.stringify(S, null, 2);
+  const file = new File([text], name, { type: 'application/json' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Шаг — резервная копия' }); save(); render(); toast('Копия сохранена'); return; }
+  } catch(e) { if (e && e.name === 'AbortError') { S.lastBackup = null; return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000); save(); render(); toast('Копия сохранена');
+}
+function backupCard(){
+  if (!S.goals.length) return '';
+  const t = key(today()), last = S.lastBackup, days = last ? Math.round((parse(t) - parse(last))/864e5) : null;
+  if ((last && days < 7) || (S.bkSnooze && S.bkSnooze > t)) return '';
+  return `<div class="card backup"><div class="tx">Сохранить копию?<small>${last ? `Последняя копия — ${days} ${plural(days,'день','дня','дней')} назад` : 'Копий ещё не было'}. Сохраните в «Файлы» или iCloud — на случай, если удалите иконку.</small></div>
+    <div class="bb"><button class="l" data-act="bklater">Позже</button><button class="b" data-act="backup">Сохранить копию</button></div></div>`;
+}
 function closeSheet(){ scrim.classList.remove('open'); sheet.classList.remove('open'); document.activeElement?.blur(); }
 
 let pt; function praise(){
@@ -747,7 +827,14 @@ document.addEventListener('click', e => {
     case 'toggle': if (isPast(b.dataset.k)) return; setVal(g,b.dataset.k, getVal(g,b.dataset.k)?0:1); buzz(); render(); break;
     case 'inc': if (isPast(b.dataset.k)) return; setVal(g,b.dataset.k, getVal(g,b.dataset.k)+1); buzz(); render(); break;
     case 'dec': e.stopPropagation(); if (isPast(b.dataset.k)) return; setVal(g,b.dataset.k, getVal(g,b.dataset.k)-1); buzz(); render(); break;
-    case 'cell': { const k=b.dataset.k; if (isPast(k)) return; setVal(g,k, getVal(g,k)>=target(g)?0:target(g)); buzz(); render(); break; }
+    case 'cell': { const k=b.dataset.k; if (isPast(k)) return;
+      if (g.type === 'time') { if (running(g,k)) stopTimer(false); setSecs(g,k, frac(g,k) >= 1 ? 0 : target(g)*60); }
+      else setVal(g,k, getVal(g,k)>=target(g)?0:target(g)); buzz(); render(); break; }
+    case 'tplay': if (isPast(b.dataset.k)) return; if (running(g,b.dataset.k)) stopTimer(); else startTimer(g,b.dataset.k); buzz(); render(); break;
+    case 'tdone': e.stopPropagation(); if (isPast(b.dataset.k)) return; if (running(g,b.dataset.k)) stopTimer(false); setSecs(g,b.dataset.k,target(g)*60); buzz(); render(); break;
+    case 'treset': if (isPast(b.dataset.k)) return; if (confirm('Сбросить время и снять отметку?')) { setSecs(g,b.dataset.k,0); render(); } break;
+    case 'backup': backup(); break;
+    case 'bklater': S.bkSnooze = key(addDays(today(),3)); save(); render(); break;
     case 'week': UI.week = b.dataset.k; render(); break;
     case 'wk': { const n = addDays(parse(UI.week), 7*+b.dataset.d); if (n <= today()) { UI.week = key(n); render(); } break; }
     case 'new': openEditor(null); break;
@@ -774,7 +861,7 @@ document.addEventListener('click', e => {
       save(); closeSheet(); render(); break; }
     case 'color': syncDraft(); draft.color = b.dataset.c; redraw(); break;
     case 'icon': syncDraft(); draft.icon = b.dataset.n; redraw(); break;
-    case 'type': syncDraft(); draft.type = b.dataset.t; redraw(); break;
+    case 'type': syncDraft(); if (b.dataset.t === 'time' && draft.type !== 'time') draft.target = 30; draft.type = b.dataset.t; redraw(); break;
     case 'dayt': syncDraft(); draft.days[+b.dataset.i] = !draft.days[+b.dataset.i]; redraw(); break;
     case 'preset': syncDraft(); draft.days = DAY.map((_,i)=> b.dataset.p==='all' || (b.dataset.p==='wd'?i<5:i>=5)); redraw(); break;
     case 'saveg': {
@@ -792,6 +879,7 @@ document.addEventListener('click', e => {
       save(); closeSheet(); render(); toast('Сохранено'); break; }
     case 'delg':
       if (!confirm('Удалить цель вместе с историей?')) return;
+      if (S.run && S.run.id === draft.id) S.run = null;
       S.goals = S.goals.filter(x => x.id !== draft.id);
       for (const k in S.log){ delete S.log[k][draft.id]; if (!Object.keys(S.log[k]).length) delete S.log[k]; }
       save(); closeSheet(); render(); toast('Цель удалена'); break;
@@ -816,10 +904,7 @@ document.addEventListener('click', e => {
       S.weeks[key(addDays(cw,-7))]  = [{ id:uid(), text:'Ни одного пропуска отжиманий', status:null }];
       S.weeks[key(cw)] = [{ id:uid(), text:'Лечь спать до 23:30 пять раз', status:null }];
       save(); render(); toast('Примеры добавлены'); break; }
-    case 'export': {
-      const blob = new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `shag-${key(today())}.json`; a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href),1000); break; }
+    case 'export': backup(); break;
     case 'import': document.getElementById('importFile').click(); break;
   }
 });
@@ -828,17 +913,18 @@ document.getElementById('importFile').addEventListener('change', async e => {
   const f = e.target.files[0]; if (!f) return;
   try { const d = JSON.parse(await f.text()); if (!Array.isArray(d.goals) || typeof d.log !== 'object') throw 0;
     if (!confirm('Заменить текущие данные данными из файла?')) return;
-    d.goals.forEach(fixGoal); if (!d.weeks || typeof d.weeks !== 'object') d.weeks = {}; S = d; save(); render(); toast('Данные загружены'); }
+    d.goals.forEach(fixGoal); if (!d.weeks || typeof d.weeks !== 'object') d.weeks = {}; if (!d.secs || typeof d.secs !== 'object') d.secs = {}; if (S.run) keepAwake(false); S = d; if (S.run) keepAwake(true); save(); render(); toast('Данные загружены'); }
   catch(_) { toast('Не удалось прочитать файл'); }
   e.target.value = '';
 });
 const onScroll = () => bar.classList.toggle('show', scrollY > 60);
 addEventListener('scroll', onScroll, { passive:true });
-document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); if (S.run) keepAwake(true); render(); } });
 
 function atMidnight(){ const n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate()+1, 0, 0, 2);
   setTimeout(() => { if (UI.selDay < key(today()) && UI.selDay === key(addDays(today(),-1))) UI.selDay = key(today()); render(); atMidnight(); }, m - n); }
 atMidnight();
+if (S.run) { tick(); keepAwake(true); }
 render();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
