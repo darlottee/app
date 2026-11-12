@@ -111,6 +111,14 @@ input,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .tile .act.ck{border:1.5px solid var(--label3)}
 .tile .act.mn{background:var(--fill);font-size:18px;line-height:1;color:var(--label)}
 .tile .sub{color:var(--label2);font-size:12px;margin-top:4px}
+.tile.locked:active{transform:none}
+.tile.missed{background:rgba(255,255,255,.025);border-style:dashed;border-color:rgba(255,255,255,.12)}
+.tile.missed .name{color:var(--label2);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.25)}
+.tile.missed .sq{opacity:.45}
+.tile.missed .sub{color:var(--red)}
+.tile .act.xx{background:rgba(255,255,255,.06);color:var(--label3)}
+.chips button.on{background:#e4eaf0;color:#0c1015;border-color:transparent}
+.row .rdate{width:auto;min-width:150px;color:var(--label)}
 .tile.done{border-color:transparent;color:var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .tile.done .sq{background:rgba(12,16,21,.12)!important}
 .tile.done .val span,.tile.done .sub{color:rgba(12,16,21,.6)}
@@ -235,6 +243,12 @@ textarea.field{height:auto;min-height:96px;padding:14px 0;resize:none;line-heigh
 .pick button svg{width:20px;height:20px}
 .pick button.on{box-shadow:0 0 0 1.5px var(--label);color:var(--label)}
 .pick.colors{grid-template-columns:repeat(8,1fr)}
+.pick.icons{grid-template-columns:repeat(5,1fr);gap:12px 4px}
+.pick.icons button{aspect-ratio:auto;border-radius:0;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;color:var(--label3);box-shadow:none!important}
+.pick.icons .ci{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--fill2);color:var(--label2);transition:background .2s}
+.pick.icons .ci svg{width:24px;height:24px}
+.pick.icons button.on{color:var(--label)}
+.pick.icons button.on .ci{background:#e4eaf0;color:#0c1015}
 .pick.colors button.on{box-shadow:0 0 0 2px rgba(16,20,26,.9),0 0 0 3.5px var(--label)}
 .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:14px}
 .days button{aspect-ratio:1;border-radius:50%;background:var(--fill2);font-size:12px;font-weight:500;color:var(--label2)}
@@ -304,31 +318,43 @@ const weekLabel = ws => { const we = addDays(ws,6);
 /* ---------- icons (SF Symbols‑like) ---------- */
 const sv = (d, extra='') => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${d}</svg>`;
 const ICONS = {
-  target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',
-  dumbbell:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
-  run:'<circle cx="14.5" cy="4.5" r="1.8" fill="currentColor" stroke="none"/><path d="M7 21l3.5-5 3 2.5V22M8.5 11l3.2-3.3 3 2.3 3.3 1M11.7 7.7 10 15.5"/>',
-  bike:'<circle cx="5.5" cy="16.5" r="3.5"/><circle cx="18.5" cy="16.5" r="3.5"/><path d="M5.5 16.5 9 9h6l3.5 7.5M9 9l3 7.5h-6.5M13.5 5.5h2.5"/>',
-  book:'<path d="M12 6.5C10 5 7 4.5 4 5v13.5c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5V20"/>',
-  drop:'<path d="M12 3.5s6 6.3 6 10.8a6 6 0 0 1-12 0C6 9.8 12 3.5 12 3.5z"/>',
-  moon:'<path d="M19.5 14.5A7.8 7.8 0 1 1 9.5 4.5a6.2 6.2 0 0 0 10 10z"/>',
-  heart:'<path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/>',
-  leaf:'<path d="M5 19c0-8.5 5-13.5 15-14.5C19 14 14 19 5 19zM5 19l7.5-7.5"/>',
-  pen:'<path d="M4.5 19.5l1-4L16 5a2.1 2.1 0 0 1 3 3L8.5 18.5l-4 1zM14 7l3 3"/>',
-  bolt:'<path d="M13 2.5 5 13.5h6l-1 8 8-11h-6l1-8z"/>',
-  music:'<path d="M9 18V5.5l11-2V16"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
-  laptop:'<rect x="4.5" y="5" width="15" height="10.5" rx="1.5"/><path d="M2.5 19h19"/>',
-  brain:'<path d="M12 5.5a3 3 0 0 0-5.5-1.2A3 3 0 0 0 4 9a3.2 3.2 0 0 0 .5 5.6A3.3 3.3 0 0 0 8 19.5a3 3 0 0 0 4-1M12 5.5a3 3 0 0 1 5.5-1.2A3 3 0 0 1 20 9a3.2 3.2 0 0 1-.5 5.6 3.3 3.3 0 0 1-3.5 4.9 3 3 0 0 1-4-1M12 5.5v13"/>',
-  pill:'<rect x="3" y="8.5" width="18" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M9.5 9.5l5 5"/>',
-  star:'<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
-  flame:'<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.2 1.2-3.6 2.3-4.6.3 1.6 1.1 2.6 2.2 2.6 0-3 .5-5.5.5-8z"/>',
-  home:'<path d="M4 10.5 12 4l8 6.5V20h-5v-5.5H9V20H4z"/>',
+  walk:'<circle cx="12" cy="4" r="2.1" fill="currentColor" stroke="none"/><path d="M12 7.2V13.5M12 8.8 9.6 12.3M12 8.8l2.4 3.5M12 13.5 10 20.5M12 13.5l2.3 4.2.9 2.8"/>',
+  run:'<circle cx="15.3" cy="4.2" r="2.1" fill="currentColor" stroke="none"/><path d="M14.3 7.4 11.6 13M13.8 8.6l2.8 2 2.2-1.2M13.8 8.6 10.6 9.4 8.6 12.2M11.6 13l3.1 2.8-1 4.7M11.6 13l-2 4-4 .6"/>',
+  jump:'<circle cx="12" cy="4" r="2.1" fill="currentColor" stroke="none"/><path d="M12 7.2V13M12 8.4 7.2 4.8M12 8.4l4.8-3.6M12 13l-4 7M12 13l4 7"/>',
+  pushup:'<circle cx="19.2" cy="9.6" r="2.1" fill="currentColor" stroke="none"/><path d="M17.2 11.4 5 15.8M15.4 12 15.6 18M5 15.8l-1.6 2.4M2.5 19.5h19"/>',
+  lift:'<circle cx="12" cy="7" r="2.1" fill="currentColor" stroke="none"/><path d="M4.5 3.5h15M5.5 2v3M18.5 2v3M12 9.6V15M12 10.6 8.5 8 8 3.5M12 10.6 15.5 8 16 3.5M12 15l-3 2.5V21M12 15l3 2.5V21"/>',
+  squat:'<circle cx="10.5" cy="4.5" r="2.1" fill="currentColor" stroke="none"/><path d="M11 7.4 13 13M11.6 9.2 17 10.2M13 13l-4.5 1.6 1 5.9M13 13l3 2.5.2 5"/>',
+  glutes:'<circle cx="4.6" cy="15.6" r="2.1" fill="currentColor" stroke="none"/><path d="M7 16.4 13 11.2l4.6.6.4 6.4M8 17.2l4 1.4M2.5 19.6h19"/>',
+  back:'<circle cx="18" cy="6.2" r="2.1" fill="currentColor" stroke="none"/><path d="M15.8 8 7 9.6M7 9.6 6 15l-1 5.5M7 9.6l3 5 .5 5.9M14.6 8.4v5.8M12.6 14.4h4M12.6 13.2v2.4M16.6 13.2v2.4"/>',
+  bike:'<circle cx="14.2" cy="4.2" r="2.1" fill="currentColor" stroke="none"/><circle cx="6" cy="17" r="3.4"/><circle cx="18" cy="17" r="3.4"/><path d="M13.4 7.2 10.4 12.2M13 8.6l3.4 2.4M10.4 12.2l3.4 1.6-1.2 3.2M6 17l4-4.6M16.4 11 18 17"/>',
+  swim:'<circle cx="7.5" cy="9.5" r="2.1" fill="currentColor" stroke="none"/><path d="M9.6 11.2 19 13.4M11.6 11.6 14.5 7.8l4.3 1.6M2.5 17.5q2.4-2 4.8 0t4.8 0 4.8 0 4.8 0"/>',
+  yoga:'<circle cx="12" cy="4.6" r="2.1" fill="currentColor" stroke="none"/><path d="M12 7.6V13.8M12 9.6 8.2 13l-2-.5M12 9.6l3.8 3.4 2-.5M5.5 18c2.5-2.6 10.5-2.6 13 0M7.2 19.6h9.6"/>',
+  tree:'<circle cx="12" cy="7.5" r="2.1" fill="currentColor" stroke="none"/><path d="M12 10.4V15.5M12 3l-2 1.6M12 3l2 1.6M10 4.6 9.6 9.4M14 4.6l.4 4.8M12 15.5V21M12 15.5l3.5 1.4-3.3 1.4"/>',
+  stretch:'<circle cx="9" cy="5" r="2.1" fill="currentColor" stroke="none"/><path d="M9.6 8 11.5 14M10 9.4c2.6-1.6 5.3-3.6 7.6-6.4M11.5 14 8 20.5M11.5 14l4.5 6.5"/>',
+  dance:'<circle cx="13.4" cy="4" r="2.1" fill="currentColor" stroke="none"/><path d="M12.9 7 11 13M12.4 8.6l3.6-3 1.8-2.2M12.4 8.6 8 10.2M11 13l3.6 3-1.4 4.6M11 13l-3 5.6-2 .6"/>',
+  hike:'<circle cx="11" cy="4" r="2.1" fill="currentColor" stroke="none"/><path d="M11 7.2V13.6M8.2 7.8h2.4v5.2H8.2zM11 9l3.6 2.4M15.4 6.5V21M11 13.6 9 20.5M11 13.6l2 3.4.6 3.5"/>',
+  kick:'<circle cx="8.6" cy="4" r="2.1" fill="currentColor" stroke="none"/><circle cx="18.5" cy="17.5" r="2"/><path d="M8.8 7.2 10 13M9.2 8.6 5.4 10.4M9.2 8.6l3.6-1.6M10 13 8.2 20.5M10 13l5.6 2.6"/>',
+  zh:"<circle cx=\"6.6\" cy=\"10\" r=\"2.9\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M1.6 22c0-5.6 10-5.6 10 0\"/><path d=\"M12.4 1.6h8.8a2 2 0 0 1 2 2v7.2a2 2 0 0 1-2 2h-5.6l-3.2 2.6v-2.6a2 2 0 0 1-2-2V3.6a2 2 0 0 1 2-2z\" stroke-width=\"1.6\"/><text x=\"16.8\" y=\"10.3\" font-size=\"8.4\" font-weight=\"700\" text-anchor=\"middle\" fill=\"currentColor\" stroke=\"none\" font-family=\"Inter,-apple-system,'PingFang SC',sans-serif\">\u4e2d</text>",
+  fr:"<circle cx=\"6.6\" cy=\"10\" r=\"2.9\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M1.6 22c0-5.6 10-5.6 10 0\"/><path d=\"M12.4 1.6h8.8a2 2 0 0 1 2 2v7.2a2 2 0 0 1-2 2h-5.6l-3.2 2.6v-2.6a2 2 0 0 1-2-2V3.6a2 2 0 0 1 2-2z\" stroke-width=\"1.6\"/><text x=\"16.8\" y=\"9.4\" font-size=\"6\" font-weight=\"700\" text-anchor=\"middle\" fill=\"currentColor\" stroke=\"none\" font-family=\"Inter,-apple-system,'PingFang SC',sans-serif\">FR</text>",
+  en:"<circle cx=\"6.6\" cy=\"10\" r=\"2.9\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M1.6 22c0-5.6 10-5.6 10 0\"/><path d=\"M12.4 1.6h8.8a2 2 0 0 1 2 2v7.2a2 2 0 0 1-2 2h-5.6l-3.2 2.6v-2.6a2 2 0 0 1-2-2V3.6a2 2 0 0 1 2-2z\" stroke-width=\"1.6\"/><text x=\"16.8\" y=\"9.4\" font-size=\"6\" font-weight=\"700\" text-anchor=\"middle\" fill=\"currentColor\" stroke=\"none\" font-family=\"Inter,-apple-system,'PingFang SC',sans-serif\">EN</text>",
+  de:"<circle cx=\"6.6\" cy=\"10\" r=\"2.9\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M1.6 22c0-5.6 10-5.6 10 0\"/><path d=\"M12.4 1.6h8.8a2 2 0 0 1 2 2v7.2a2 2 0 0 1-2 2h-5.6l-3.2 2.6v-2.6a2 2 0 0 1-2-2V3.6a2 2 0 0 1 2-2z\" stroke-width=\"1.6\"/><text x=\"16.8\" y=\"9.4\" font-size=\"6\" font-weight=\"700\" text-anchor=\"middle\" fill=\"currentColor\" stroke=\"none\" font-family=\"Inter,-apple-system,'PingFang SC',sans-serif\">DE</text>",
+  read:'<circle cx="8.5" cy="4.8" r="2.1" fill="currentColor" stroke="none"/><path d="M8.5 7.8V14M8.5 14h5V20M8.5 9.6l4.4 1.8M12.5 8.4 17.5 7v5.6l-5 1.4z"/>',
+  uni:"<circle cx=\"12\" cy=\"12.2\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M3.2 6 12 2.4 20.8 6 12 9.6z\" fill=\"currentColor\" stroke-width=\"1.4\"/><path d=\"M7.4 7.8v2.4M18.6 6.8v4.6M5.8 21.6c0-5.6 12.4-5.6 12.4 0\"/>",
+  work:'<circle cx="7.5" cy="5.5" r="2.1" fill="currentColor" stroke="none"/><path d="M7.5 8.5 8 14.5M8 14.5h4.5V20M7.8 10.2l4.6 2M11 13h10M19.5 13v7M14.2 13l-1-4.6h5l1 4.6"/>',
+  water2:"<path d=\"M10 2.5h4M10.2 2.5v2.6C7.8 6.1 6.8 7.6 6.8 9.6v9.9a2 2 0 0 0 2 2h6.4a2 2 0 0 0 2-2V9.6c0-2-1-3.5-3.4-4.5V2.5\"/><text x=\"12\" y=\"17.6\" font-size=\"6.2\" font-weight=\"700\" text-anchor=\"middle\" fill=\"currentColor\" stroke=\"none\" font-family=\"Inter,-apple-system,sans-serif\">2\u043b</text>",
+  drink:'<circle cx="10" cy="4.6" r="2.1" fill="currentColor" stroke="none"/><path d="M10 7.6V14.5M10 14.5 8.6 21M10 14.5l1.4 6.5M10 9.4l3.4 1.8.4-3.4M12.4 2.5h3.6l-.6 4.8h-2.4z"/>',
+  parents:"<circle cx=\"6.8\" cy=\"9.4\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"17.2\" cy=\"9.4\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M2 21c0-5.4 9.6-5.4 9.6 0M12.4 21c0-5.4 9.6-5.4 9.6 0\"/><path d=\"M12 7.6s-2.6-1.6-2.6-3.4a1.3 1.3 0 0 1 2.6-.7 1.3 1.3 0 0 1 2.6.7c0 1.8-2.6 3.4-2.6 3.4z\" fill=\"currentColor\" stroke-width=\"1\"/>",
+  treat:"<circle cx=\"6.2\" cy=\"4.6\" r=\"2.1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M6.2 7.6V14.4M6.2 14.4 4.6 21M6.2 14.4 7.8 21M6.2 9.2l4.6 2.6 2.4-.2M12.2 10.6l3.4 8.4 3.4-8.4z\" stroke-width=\"1.8\"/><circle cx=\"15.6\" cy=\"8\" r=\"3.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"17\" cy=\"3.6\" r=\"1.1\" fill=\"currentColor\" stroke=\"none\"/>",
+  sleep:'<circle cx="5.8" cy="12.4" r="2.1" fill="currentColor" stroke="none"/><path d="M8.6 13.2h9.4a2.2 2.2 0 0 1 2.2 2.2v.6M3 9.5V20M3 16.5h18V20M13.5 4.5h3l-3 3h3M18 2h2.5L18 4.5h2.5"/>',
 };
+const ICON_NAMES = {walk:'ходьба',run:'бег',jump:'прыжки',pushup:'отжимания',lift:'штанга',squat:'присед',glutes:'попа',back:'спина',bike:'велосипед',swim:'плавание',yoga:'медитация',tree:'йога',stretch:'растяжка',dance:'танцы',hike:'поход',kick:'футбол',zh:'китайский',fr:'французский',en:'английский',de:'немецкий',read:'чтение',work:'работа',drink:'вода',water2:'вода 2 л',uni:'университет',parents:'родители',treat:'вкусняшка',sleep:'сон'};
+const ICON_OLD = {target:"jump",dumbbell:"lift",bike:"bike",book:"read",drop:"drink",moon:"sleep",heart:"yoga",leaf:"walk",pen:"work",bolt:"jump",music:"dance",laptop:"work",brain:"yoga",pill:"drink",star:"jump",flame:"run",home:"walk"};
 const COLORS = ['#e4e9ee','#a7c3d8','#7d9cc0','#4f6f96','#b4bcc4','#848d97','#4a525c','#1c2027'];
 const isLight = c => { const n = parseInt(c.slice(1),16), r=n>>16, g=n>>8&255, b=n&255; return (r*.299+g*.587+b*.114) > 140; };
 const OLD = {'#0a84ff':'#7d9cc0','#30d158':'#a7c3d8','#ff9f0a':'#b4bcc4','#ff375f':'#4f6f96','#bf5af2':'#4a525c','#64d2ff':'#a7c3d8','#ffd60a':'#e4e9ee','#ff453a':'#848d97',
   '#a9b8c6':'#7d9cc0','#b5c0a3':'#a7c3d8','#d4b593':'#b4bcc4','#cf9c8c':'#4f6f96','#b8acc8':'#848d97','#9fbcb6':'#a7c3d8','#ddcfa6':'#e4e9ee','#c7c1b8':'#b4bcc4',
   '#8ea6bf':'#7d9cc0','#7f93ad':'#4f6f96','#93b2b4':'#a7c3d8','#a4a6c6':'#848d97','#aec4d4':'#a7c3d8','#8189ab':'#4a525c','#9cb5ad':'#b4bcc4','#a9b2bc':'#e4e9ee'};
-const ic = n => sv(ICONS[n] || ICONS.target);
+const ic = n => sv(ICONS[n] || ICONS.walk);
 const I = {
   check:sv('<path d="M5 12.5l4.5 4.5L19 7.5"/>','stroke-width="3"'),
   plus:sv('<path d="M12 5v14M5 12h14"/>','stroke-width="2.4"'),
@@ -351,7 +377,7 @@ const STORE = 'shag.v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(STORE)); } catch(e) {}
 if (!S || !Array.isArray(S.goals)) S = { goals: [], log: {} };
-const fixGoal = (g,i) => { if (!ICONS[g.icon]) g.icon = 'target'; if (OLD[g.color]) g.color = OLD[g.color]; if (!g.color) g.color = COLORS[i % COLORS.length]; return g; };
+const fixGoal = (g,i) => { if (!ICONS[g.icon]) g.icon = ICON_OLD[g.icon] || 'walk'; if (OLD[g.color]) g.color = OLD[g.color]; if (!g.color) g.color = COLORS[i % COLORS.length]; return g; };
 S.goals.forEach(fixGoal);
 const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} };
 if (!S.weeks || typeof S.weeks !== 'object') S.weeks = {};
@@ -385,7 +411,10 @@ const setVal = (g,k,v) => {
 };
 const target = g => g.type === 'count' ? Math.max(1, +g.target || 1) : 1;
 const frac = (g,k) => Math.min(1, getVal(g,k) / target(g));
-const active = (g,d) => g.days[dow(d)] && key(d) >= g.created;
+const active = (g,d) => g.date ? key(d) === g.date : (g.days[dow(d)] && key(d) >= g.created);
+const isPast = k => k < key(today());
+const dateLabel = k => { const d = parse(k), t = key(today()), tm = key(addDays(today(),1)), ys = key(addDays(today(),-1));
+  return (k===t?'Сегодня':k===tm?'Завтра':k===ys?'Вчера':DAY[dow(d)]) + `, ${d.getDate()} ${MONF[d.getMonth()]}`; };
 const goalsOn = d => S.goals.filter(g => active(g,d));
 function dayStats(d){
   const k = key(d), gs = goalsOn(d); let score = 0, done = 0;
@@ -414,6 +443,7 @@ function totalDone(){
   return n;
 }
 const schedule = g => {
+  if (g.date) return dateLabel(g.date);
   const c = g.days.filter(Boolean).length;
   if (c === 7) return 'Каждый день';
   if (c === 5 && g.days.slice(0,5).every(Boolean)) return 'По будням';
@@ -489,21 +519,27 @@ function home(){
   </div>`;
 }
 function tile(g,k){
-  const v = getVal(g,k), f = frac(g,k), done = f >= 1;
+  const v = getVal(g,k), f = frac(g,k), done = f >= 1, past = isPast(k);
   const style = done ? `style="background:${g.color}"` : '';
-  const cls = `tile ${done?'done':''} ${done&&!isLight(g.color)?'inv':''}`;
+  const cls = `tile ${done?'done':''} ${done&&!isLight(g.color)?'inv':''} ${past?'locked':''} ${past&&!done?'missed':''}`;
+  if (past) return `
+    <button class="${cls}" ${style} data-act="locked">
+      <span class="act ${done?'ck':'xx'}" style="${done?`color:${g.color}`:''}">${done?I.check:X}</span>
+      <div>${sq(g)}<div class="name">${esc(g.title)}</div></div>
+      <div class="sub">${done?'Выполнено':'Не выполнено'}${g.type==='count'?` · ${v} / ${target(g)} ${esc(g.unit||'')}`:''}</div>
+    </button>`;
   if (g.type === 'count') return `
     <button class="${cls}" ${style} data-act="inc" data-id="${g.id}" data-k="${k}">
       ${v>0?`<span class="act mn" data-act="dec" data-id="${g.id}" data-k="${k}" aria-label="Минус один">−</span>`:''}
       <div>${sq(g)}<div class="name">${esc(g.title)}</div></div>
-      <div><div class="val">${v}<span>/ ${target(g)} ${esc(g.unit||'')}</span></div>
+      <div><div class="val">${v}<span>/ ${target(g)} ${esc(g.unit||'')}</span></div>${done?'':'<div class="sub" style="margin-top:6px">до 24:00</div>'}
       <div class="meter"><div style="width:${f*100}%;background:${g.color}"></div></div></div>
     </button>`;
   return `
     <button class="${cls}" ${style} data-act="toggle" data-id="${g.id}" data-k="${k}">
       <span class="act ck" style="${done?`color:${g.color}`:''}">${done?I.check:''}</span>
       <div>${sq(g)}<div class="name">${esc(g.title)}</div></div>
-      <div class="sub">${done?'Выполнено':'Нажмите, чтобы отметить'}</div>
+      <div class="sub">${done?'Выполнено':'Отметьте до 24:00'}</div>
     </button>`;
 }
 
@@ -544,7 +580,8 @@ function progress(){
       else if (f > 0) { cls='part'; inner=v; st=`background:${g.color}40;color:${g.color}`; }
       else if (k < tk) cls='miss';
       else if (k > tk) cls='fut';
-      grid += `<button class="cell ${cls}" style="${st}" data-act="cell" data-id="${g.id}" data-k="${k}" aria-label="${esc(g.title)}, ${DAY[i]}">${inner}</button>`;
+      grid += k < tk ? `<div class="cell ${cls}" style="${st}" title="${esc(g.title)}, ${DAY[i]}">${inner}</div>`
+        : `<button class="cell ${cls}" style="${st}" data-act="cell" data-id="${g.id}" data-k="${k}" aria-label="${esc(g.title)}, ${DAY[i]}">${inner}</button>`;
     }
   });
   grid += `</div>`;
@@ -573,9 +610,9 @@ function progress(){
     ${gs.length ? `
     <div class="sec"><h2>План недели</h2></div>
     <div class="card">${grid}
-      <div class="legend"><span><i class="cell done" style="background:#dbe4ee"></i>выполнено</span><span><i class="cell part" style="background:rgba(219,228,238,.3)"></i>частично</span><span><i class="cell miss"></i>пропущено</span><span><i class="cell fut"></i>впереди</span></div>
+      <div class="legend"><span><i class="cell done" style="background:#dbe4ee"></i>выполнено</span><span><i class="cell part" style="background:rgba(219,228,238,.3)"></i>частично</span><span><i class="cell miss"></i>не выполнено</span><span><i class="cell fut"></i>впереди</span></div>
     </div>
-    <div class="foot" style="margin-top:-4px">Нажмите на кружок, чтобы отметить или снять выполнение.</div>
+    <div class="foot" style="margin-top:-4px">Сегодня и будущие дни можно отметить нажатием. После 24:00 день закрывается — неотмеченное считается невыполненным.</div>
     <div class="cap">По целям</div>
     <div class="list">${per}</div>`
     : `<div class="card" style="text-align:center;color:var(--label2);padding:28px">На этой неделе не было запланированных целей</div>`}
@@ -584,13 +621,19 @@ function progress(){
 
 /* ---------- goals ---------- */
 function goals(){
-  const list = S.goals.map(g => `
+  const tk = key(today());
+  const st = g => { if (!g.date || g.date >= tk) return ''; return frac(g,g.date) >= 1 ? ' · выполнено' : ' · не выполнено'; };
+  const rowOf = g => `
     <button class="row" data-act="edit" data-id="${g.id}">${sq(g)}
-      <span class="body"><div>${esc(g.title)}</div><small>${schedule(g)}${g.type==='count'?` · ${target(g)} ${esc(g.unit||'')} в день`:''}</small></span>${I.chev}
-    </button>`).join('');
+      <span class="body"><div>${esc(g.title)}</div><small>${schedule(g)}${st(g)}${g.type==='count'?` · ${target(g)} ${esc(g.unit||'')}${g.date?'':' в день'}`:''}</small></span>${I.chev}
+    </button>`;
+  const upcoming = S.goals.filter(g => g.date && g.date >= tk).sort((a,b) => a.date < b.date ? -1 : 1);
+  const regular = S.goals.filter(g => !g.date);
+  const past = S.goals.filter(g => g.date && g.date < tk).sort((a,b) => a.date > b.date ? -1 : 1).slice(0,30);
+  const sect = (t, arr) => arr.length ? `<div class="cap">${t}</div><div class="list">${arr.map(rowOf).join('')}</div>` : '';
   return `<div class="fade">${header()}
-    ${S.goals.length ? `<div class="list">${list}</div><div class="foot">Нажмите на цель, чтобы изменить расписание или удалить её.</div>`
-      : `<div class="card empty"><div class="ic">${ic('target')}</div><h3>Целей пока нет</h3><p>Создайте цель и выберите дни недели — она появится в плане.</p>
+    ${S.goals.length ? `${sect('На определённый день', upcoming)}${sect('Регулярные', regular)}${sect('Прошедшие', past)}<div class="foot">Нажмите на цель, чтобы изменить её или удалить.</div>`
+      : `<div class="card empty"><div class="ic">${ic('target')}</div><h3>Целей пока нет</h3><p>Создайте цель на конкретный день или на дни недели — она появится в плане.</p>
          <div class="btns"><button class="btn fill" data-act="new">${I.plus} Новая цель</button><button class="btn tint" data-act="demo">Показать на примере</button></div></div>`}
     ${S.goals.length?`<div style="margin-top:20px"><button class="btn tint" data-act="new">${I.plus} Новая цель</button></div>`:''}
     <div class="cap">Данные</div>
@@ -607,7 +650,10 @@ let draft = null;
 const sheet = document.getElementById('sheet'), scrim = document.getElementById('scrim');
 function openEditor(id){
   const g = S.goals.find(x => x.id === id);
-  draft = g ? JSON.parse(JSON.stringify(g)) : { id:null, title:'', icon:'target', color:COLORS[S.goals.length % COLORS.length], type:'check', target:10, unit:'', days:Array(7).fill(true) };
+  const tk = key(today()), defDate = UI.tab==='home' && UI.selDay > tk ? UI.selDay : tk;
+  draft = g ? JSON.parse(JSON.stringify(g)) : { id:null, title:'', icon:'walk', color:COLORS[S.goals.length % COLORS.length], type:'check', target:10, unit:'', days:Array(7).fill(true), date:defDate };
+  draft.mode = draft.date ? 'date' : 'week';
+  if (!draft.date) draft.date = defDate;
   drawEditor();
   scrim.classList.add('open'); sheet.classList.add('open'); sheet.scrollTop = 0;
   if (!g) setTimeout(() => sheet.querySelector('#gTitle')?.focus(), 450);
@@ -623,7 +669,7 @@ function drawEditor(){
     <div class="list">
       <div class="pick colors">${COLORS.map(c=>`<button data-act="color" data-c="${c}" class="${c===d.color?'on':''}" style="background:${c}" aria-label="Цвет"></button>`).join('')}</div>
       <div style="border-top:.5px solid var(--sep);margin:0 14px"></div>
-      <div class="pick">${Object.keys(ICONS).filter(n=>n!=='home').map(n=>`<button data-act="icon" data-n="${n}" class="${n===d.icon?'on':''}" aria-label="${n}">${ic(n)}</button>`).join('')}</div>
+      <div class="pick icons">${Object.keys(ICONS).map(n=>`<button data-act="icon" data-n="${n}" class="${n===d.icon?'on':''}" aria-label="${ICON_NAMES[n]||n}"><span class="ci">${ic(n)}</span>${ICON_NAMES[n]||''}</button>`).join('')}</div>
     </div>
     <div class="cap">Как отмечать</div>
     <div class="list" style="padding:12px">
@@ -634,11 +680,18 @@ function drawEditor(){
       <label class="row plain"><span class="body"><div>Цель в день</div></span><input class="rval num" id="gTarget" type="number" min="1" inputmode="numeric" value="${d.target}"></label>
       <label class="row plain"><span class="body"><div>Единица</div></span><input class="rval" id="gUnit" maxlength="12" placeholder="раз, мин, км" value="${esc(d.unit||'')}"></label>
     </div><div class="foot">Каждое нажатие на плитку прибавляет 1.</div>`:''}
-    <div class="cap">Повторять</div>
-    <div class="list">
+    <div class="cap">Когда</div>
+    <div class="list" style="padding:12px">
+      <div class="seg"><button data-act="mode" data-m="date" class="${d.mode==='date'?'on':''}">В определённый день</button><button data-act="mode" data-m="week" class="${d.mode==='week'?'on':''}">По дням недели</button></div>
+    </div>
+    ${d.mode==='date' ? `<div class="list" style="margin-top:12px">
+      <label class="row plain"><span class="body"><div>Дата</div></span><input class="rval rdate" id="gDate" type="date" min="${key(today())}" value="${d.date}"></label>
+      <div class="chips" style="padding:0 14px 14px">${[0,1,2].map(n=>{const k=key(addDays(today(),n));return `<button data-act="qdate" data-k="${k}" class="${d.date===k?'on':''}">${n===0?'Сегодня':n===1?'Завтра':'Послезавтра'}</button>`;}).join('')}</div>
+    </div><div class="foot">Отметьте выполнение до 24:00 этого дня — иначе цель автоматически будет считаться невыполненной.</div>` : `
+    <div class="list" style="margin-top:12px">
       <div class="days">${DAY.map((x,i)=>`<button data-act="dayt" data-i="${i}" class="${d.days[i]?'on':''}">${x}</button>`).join('')}</div>
       <div class="chips"><button data-act="preset" data-p="all">Каждый день</button><button data-act="preset" data-p="wd">Будни</button><button data-act="preset" data-p="we">Выходные</button></div>
-    </div>
+    </div>`}
     ${d.id?`<div class="list" style="margin-top:28px"><button class="row plain red" data-act="delg">Удалить цель</button></div>`:''}
   </div>`;
 }
@@ -646,6 +699,7 @@ function syncDraft(){
   const t = sheet.querySelector('#gTitle'); if (t) draft.title = t.value;
   const tg = sheet.querySelector('#gTarget'); if (tg) draft.target = Math.max(1, parseInt(tg.value)||1);
   const u = sheet.querySelector('#gUnit'); if (u) draft.unit = u.value;
+  const dt = sheet.querySelector('#gDate'); if (dt && dt.value) draft.date = dt.value;
 }
 const redraw = () => { const st = sheet.scrollTop; drawEditor(); sheet.scrollTop = st; };
 let rdraft = null;
@@ -687,10 +741,13 @@ document.addEventListener('click', e => {
   switch (act){
     case 'tab': UI.tab = b.dataset.tab; if (UI.tab==='progress') UI.week = key(weekStart(today())); render(); scrollTo(0,0); onScroll(); break;
     case 'sel': UI.selDay = b.dataset.k; render(); break;
-    case 'toggle': setVal(g,b.dataset.k, getVal(g,b.dataset.k)?0:1); buzz(); render(); break;
-    case 'inc': setVal(g,b.dataset.k, getVal(g,b.dataset.k)+1); buzz(); render(); break;
-    case 'dec': e.stopPropagation(); setVal(g,b.dataset.k, getVal(g,b.dataset.k)-1); buzz(); render(); break;
-    case 'cell': { const k=b.dataset.k; setVal(g,k, getVal(g,k)>=target(g)?0:target(g)); buzz(); render(); break; }
+    case 'locked': toast('День прошёл — изменить нельзя'); break;
+    case 'mode': syncDraft(); draft.mode = b.dataset.m; redraw(); break;
+    case 'qdate': syncDraft(); draft.date = b.dataset.k; redraw(); break;
+    case 'toggle': if (isPast(b.dataset.k)) return; setVal(g,b.dataset.k, getVal(g,b.dataset.k)?0:1); buzz(); render(); break;
+    case 'inc': if (isPast(b.dataset.k)) return; setVal(g,b.dataset.k, getVal(g,b.dataset.k)+1); buzz(); render(); break;
+    case 'dec': e.stopPropagation(); if (isPast(b.dataset.k)) return; setVal(g,b.dataset.k, getVal(g,b.dataset.k)-1); buzz(); render(); break;
+    case 'cell': { const k=b.dataset.k; if (isPast(k)) return; setVal(g,k, getVal(g,k)>=target(g)?0:target(g)); buzz(); render(); break; }
     case 'week': UI.week = b.dataset.k; render(); break;
     case 'wk': { const n = addDays(parse(UI.week), 7*+b.dataset.d); if (n <= today()) { UI.week = key(n); render(); } break; }
     case 'new': openEditor(null); break;
@@ -723,8 +780,13 @@ document.addEventListener('click', e => {
     case 'saveg': {
       syncDraft();
       if (!draft.title.trim()) { toast('Введите название'); return; }
-      if (!draft.days.some(Boolean)) { toast('Выберите хотя бы один день'); return; }
+      if (draft.mode === 'week' && !draft.days.some(Boolean)) { toast('Выберите хотя бы один день'); return; }
+      if (draft.mode === 'date') { const orig = S.goals.find(x => x.id === draft.id);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(draft.date || '')) { toast('Выберите дату'); return; }
+        if (isPast(draft.date) && !(orig && orig.date === draft.date)) { toast('Нельзя поставить цель на прошедший день'); return; } }
       draft.title = draft.title.trim();
+      if (draft.mode === 'date') { if (!draft.created) draft.created = draft.date; } else delete draft.date;
+      delete draft.mode;
       if (draft.id){ const i = S.goals.findIndex(x=>x.id===draft.id); S.goals[i] = draft; }
       else { draft.id = uid(); draft.created = key(today()); S.goals.push(draft); }
       save(); closeSheet(); render(); toast('Сохранено'); break; }
@@ -736,14 +798,19 @@ document.addEventListener('click', e => {
     case 'demo': {
       const c = key(addDays(weekStart(today()),-35));
       S.goals.push(
-        { id:uid(), title:'Отжимания', icon:'dumbbell', color:'#4f6f96', type:'count', target:10, unit:'раз', days:[1,1,1,1,1,0,0].map(Boolean), created:c },
-        { id:uid(), title:'Чтение 30 минут', icon:'book', color:'#e4e9ee', type:'check', target:1, unit:'', days:Array(7).fill(true), created:c },
+        { id:uid(), title:'Отжимания', icon:'pushup', color:'#4f6f96', type:'count', target:10, unit:'раз', days:[1,1,1,1,1,0,0].map(Boolean), created:c },
+        { id:uid(), title:'Чтение 30 минут', icon:'read', color:'#e4e9ee', type:'check', target:1, unit:'', days:Array(7).fill(true), created:c },
         { id:uid(), title:'Пробежка', icon:'run', color:'#7d9cc0', type:'count', target:3, unit:'км', days:[1,0,1,0,1,0,0].map(Boolean), created:c },
-        { id:uid(), title:'Вода', icon:'drop', color:'#a7c3d8', type:'count', target:8, unit:'стак.', days:Array(7).fill(true), created:c });
+        { id:uid(), title:'Вода', icon:'drink', color:'#a7c3d8', type:'count', target:8, unit:'стак.', days:Array(7).fill(true), created:c });
       const t = today();
       for (let d = parse(c); d < t; d = addDays(d,1)) S.goals.forEach(g => {
         if (active(g,d) && Math.random() < .5 + (d - parse(c))/864e5/80) setVal(g,key(d), Math.random()<.8?target(g):Math.ceil(target(g)/2));
       });
+      const td = key(today()), yd = key(addDays(today(),-1)), tm = key(addDays(today(),1));
+      S.goals.push(
+        { id:uid(), title:'Йога утром', icon:'yoga', color:'#b4bcc4', type:'check', target:1, unit:'', days:Array(7).fill(false), date:td, created:td },
+        { id:uid(), title:'Сходить в бассейн', icon:'swim', color:'#7d9cc0', type:'check', target:1, unit:'', days:Array(7).fill(false), date:yd, created:yd },
+        { id:uid(), title:'Поход в горы', icon:'hike', color:'#4a525c', type:'check', target:1, unit:'', days:Array(7).fill(false), date:tm, created:tm });
       const cw = weekStart(today());
       S.weeks[key(addDays(cw,-14))] = [{ id:uid(), text:'Пробежать 9 км за неделю', status:'done' }, { id:uid(), text:'Дочитать «Сиддхартху»', status:'miss' }];
       S.weeks[key(addDays(cw,-7))]  = [{ id:uid(), text:'Ни одного пропуска отжиманий', status:null }];
@@ -769,6 +836,9 @@ const onScroll = () => bar.classList.toggle('show', scrollY > 60);
 addEventListener('scroll', onScroll, { passive:true });
 document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
 
+function atMidnight(){ const n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate()+1, 0, 0, 2);
+  setTimeout(() => { if (UI.selDay < key(today()) && UI.selDay === key(addDays(today(),-1))) UI.selDay = key(today()); render(); atMidnight(); }, m - n); }
+atMidnight();
 render();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
