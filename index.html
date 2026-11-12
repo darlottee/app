@@ -215,7 +215,7 @@ textarea.field{height:auto;min-height:96px;padding:14px 0;resize:none;line-heigh
 .tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 14px);display:flex;gap:2px;padding:4px;border-radius:999px;z-index:10;
   background:rgba(12,15,20,.55);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(30px) saturate(120%);-webkit-backdrop-filter:blur(30px) saturate(120%);
   box-shadow:0 16px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06)}
-.tabs button{display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;border-radius:999px;font-size:13px;font-weight:500;color:var(--label2);transition:color .25s,background .25s}
+.tabs button{display:flex;align-items:center;gap:7px;height:42px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:500;color:var(--label2);transition:color .25s,background .25s}
 .tabs button svg{width:18px;height:18px}
 .tabs button.on{color:var(--ink);background:#e4eaf0}
 
@@ -295,6 +295,14 @@ textarea.field{height:auto;min-height:96px;padding:14px 0;resize:none;line-heigh
 .card,.tile,.list{backdrop-filter:blur(22px) saturate(125%);-webkit-backdrop-filter:blur(22px) saturate(125%);border-color:rgba(255,255,255,.12);box-shadow:0 8px 30px rgba(0,0,0,.18)}
 .sheet .list{backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none}
 .top,.sec,.cap,.foot,.weeknav{text-shadow:0 1px 12px rgba(0,0,0,.45)}
+.app>.fade>.foot,.app>.fade>.cap{color:rgba(226,233,240,.78);text-shadow:0 1px 3px rgba(0,0,0,.55),0 0 18px rgba(0,0,0,.45)}
+
+.tabs button:not(.on) span{display:none}
+.tabs button:not(.on){padding:0 13px}
+.note-ed{width:100%;min-height:52vh;border:0;outline:0;background:none;resize:none;font-size:17px;line-height:25px;padding:14px 0;color:var(--label)}
+.note-ed::placeholder{color:var(--label3)}
+.nrow .body div{font-weight:500}
+.nrow .body small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -302,9 +310,10 @@ textarea.field{height:auto;min-height:96px;padding:14px 0;resize:none;line-heigh
 <div class="app" id="app"></div>
 
 <nav class="tabs" id="tabs">
-  <button data-tab="home"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.7a1 1 0 0 1 1.4 0l8 7.4c.2.2.3.5.3.7V20a2 2 0 0 1-2 2h-4v-6.5h-6V22H5a2 2 0 0 1-2-2v-9.2c0-.2.1-.5.3-.7l8-7.4z"/></svg>Сегодня</button>
-  <button data-tab="progress"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="12" width="4" height="9" rx="1.5"/><rect x="10" y="7" width="4" height="14" rx="1.5"/><rect x="17" y="3" width="4" height="18" rx="1.5"/></svg>Прогресс</button>
-  <button data-tab="goals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>Цели</button>
+  <button data-tab="home"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.3 2.7a1 1 0 0 1 1.4 0l8 7.4c.2.2.3.5.3.7V20a2 2 0 0 1-2 2h-4v-6.5h-6V22H5a2 2 0 0 1-2-2v-9.2c0-.2.1-.5.3-.7l8-7.4z"/></svg><span>Сегодня</span></button>
+  <button data-tab="progress"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="12" width="4" height="9" rx="1.5"/><rect x="10" y="7" width="4" height="14" rx="1.5"/><rect x="17" y="3" width="4" height="18" rx="1.5"/></svg><span>Прогресс</span></button>
+  <button data-tab="goals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg><span>Цели</span></button>
+  <button data-tab="notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h8.5L19 8v11.5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z"/><path d="M14 3.5V8h5M8.5 12.5h7M8.5 16h5"/></svg><span>Заметки</span></button>
 </nav>
 
 <div class="scrim" id="scrim"></div>
@@ -404,6 +413,7 @@ S.goals.forEach(fixGoal);
 const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} };
 if (!S.weeks || typeof S.weeks !== 'object') S.weeks = {};
 if (!S.secs || typeof S.secs !== 'object') S.secs = {};
+if (!Array.isArray(S.notes)) S.notes = [];
 const weekRes = w => S.weeks[w] || [];
 const X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg>';
 function resCard(w, opts={}){
@@ -503,17 +513,17 @@ const schedule = g => {
 
 /* ---------- ui ---------- */
 const UI = { tab:'home', selDay: key(today()), week: key(weekStart(today())) };
-const TITLES = { home:'Сегодня', progress:'Прогресс', goals:'Цели' };
-const JP = { home:'今日', progress:'進歩', goals:'目標' };
+const TITLES = { home:'Сегодня', progress:'Прогресс', goals:'Цели', notes:'Заметки' };
+const JP = { home:'今日', progress:'進歩', goals:'目標', notes:'記録' };
 const app = document.getElementById('app'), bar = document.getElementById('bar');
 
 function render(){
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === UI.tab));
   bar.textContent = TITLES[UI.tab];
-  app.innerHTML = (UI.tab==='home' ? home() : UI.tab==='progress' ? progress() : goals());
+  app.innerHTML = (UI.tab==='home' ? home() : UI.tab==='progress' ? progress() : UI.tab==='notes' ? notes() : goals());
 }
 const header = (sub) => `<div class="top"><div>${sub?`<div class="date">${sub}</div>`:''}<h1>${TITLES[UI.tab]}<span class="jp">${JP[UI.tab]}</span></h1></div>
-  <button class="round-btn" data-act="new" aria-label="Новая цель">${I.plus}Цель</button></div>`;
+  ${UI.tab==='notes' ? `<button class="round-btn" data-act="nnew" aria-label="Новая заметка">${I.plus}Заметка</button>` : `<button class="round-btn" data-act="new" aria-label="Новая цель">${I.plus}Цель</button>`}</div>`;
 
 /* ---------- home ---------- */
 function home(){
@@ -808,6 +818,54 @@ function backupCard(){
   return `<div class="card backup"><div class="tx">Сохранить копию?<small>${last ? `Последняя копия — ${days} ${plural(days,'день','дня','дней')} назад` : 'Копий ещё не было'}. Сохраните в «Файлы» или iCloud — на случай, если удалите иконку.</small></div>
     <div class="bb"><button class="l" data-act="bklater">Позже</button><button class="b" data-act="backup">Сохранить копию</button></div></div>`;
 }
+/* ---------- notes ---------- */
+const noteTitle = n => (n.text.split('\n').find(l => l.trim()) || 'Без названия').trim();
+const notePreview = n => { const lines = n.text.split('\n').map(l => l.trim()).filter(Boolean); return lines.slice(1).join(' ') || ''; };
+const hm = t => { const d = new Date(t); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const noteDate = t => { const d = new Date(t), k = key(d); return dateLabel(k).split(',')[0] === 'Сегодня' || dateLabel(k).split(',')[0] === 'Вчера' ? dateLabel(k).split(',')[0] + ', ' + hm(t) : `${d.getDate()} ${MONF[d.getMonth()]}${d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : ''}`; };
+function notes(){
+  const list = S.notes.slice().sort((a,b) => b.updated - a.updated);
+  return `<div class="fade">${header()}
+    ${list.length ? `<div class="list">${list.map(n => `
+      <button class="row nrow" data-act="nedit" data-id="${n.id}"><span class="body"><div>${esc(noteTitle(n))}</div><small>${noteDate(n.updated)}${notePreview(n) ? ' · ' + esc(notePreview(n)) : ''}</small></span>${I.chev}</button>`).join('')}</div>
+      <div style="margin-top:16px"><button class="btn tint" data-act="nnew">${I.plus} Новая заметка</button></div>
+      <div class="cap">Сохранить на телефон</div>
+      <div class="list"><button class="row plain blue" data-act="nall">Все заметки одним файлом</button></div>
+      <div class="foot">Откроется меню «Поделиться» — выберите «Сохранить в Файлы». Одну заметку можно сохранить из неё самой.</div>`
+    : `<div class="card empty"><div class="ic"></div><h3>Заметок пока нет</h3><p>Записывайте мысли, планы и выводы недели. Любую заметку можно сохранить в «Файлы» на телефоне.</p>
+      <div class="btns"><button class="btn fill" data-act="nnew">${I.plus} Новая заметка</button></div></div>`}
+  </div>`;
+}
+let nId = null;
+function openNote(id){
+  const n = S.notes.find(x => x.id === id); nId = n ? n.id : null;
+  sheet.innerHTML = `<div class="nb"><button data-act="close" style="justify-self:start">Отмена</button><b>${n ? noteDate(n.updated) : 'Новая заметка'}</b><button data-act="nsave">Готово</button></div>
+  <div class="content">
+    <div class="list" style="margin-top:8px"><div class="row plain"><textarea class="note-ed" id="nText" placeholder="Первая строка станет названием…">${n ? esc(n.text) : ''}</textarea></div></div>
+    <div class="list" style="margin-top:16px">
+      <button class="row plain blue" data-act="nfile">Сохранить в Файлы</button>
+      ${n ? '<button class="row plain red" data-act="ndel">Удалить заметку</button>' : ''}
+    </div>
+  </div>`;
+  scrim.classList.add('open'); sheet.classList.add('open'); sheet.scrollTop = 0;
+  if (!n) setTimeout(() => sheet.querySelector('#nText')?.focus(), 450);
+}
+function storeNote(){
+  const text = (sheet.querySelector('#nText')?.value || '').replace(/\s+$/,'');
+  if (!text.trim()) { if (nId) { S.notes = S.notes.filter(x => x.id !== nId); nId = null; save(); } return null; }
+  let n = S.notes.find(x => x.id === nId);
+  if (n) { if (n.text !== text) { n.text = text; n.updated = Date.now(); } }
+  else { n = { id: uid(), text, created: Date.now(), updated: Date.now() }; S.notes.push(n); nId = n.id; }
+  save(); return n;
+}
+const fileSafe = t => t.replace(/[\\/:*?"<>|\n\r]+/g, ' ').replace(/\s+/g,' ').trim().slice(0, 40) || 'Заметка';
+async function shareFile(name, text, asciiName){
+  const file = new File([text], name, { type: 'text/plain' });
+  try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return true; } }
+  catch(e) { if (e && e.name === 'AbortError') return false; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new File([text], asciiName, { type: 'text/plain' })); a.download = asciiName; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000); return true;
+}
 function closeSheet(){ scrim.classList.remove('open'); sheet.classList.remove('open'); document.activeElement?.blur(); }
 
 let pt; function praise(){
@@ -840,6 +898,16 @@ document.addEventListener('click', e => {
     case 'tdone': e.stopPropagation(); if (isPast(b.dataset.k)) return; if (running(g,b.dataset.k)) stopTimer(false); setSecs(g,b.dataset.k,target(g)*60); buzz(); render(); break;
     case 'treset': if (isPast(b.dataset.k)) return; if (confirm('Сбросить время и снять отметку?')) { setSecs(g,b.dataset.k,0); render(); } break;
     case 'backup': backup(); break;
+    case 'nnew': openNote(null); break;
+    case 'nedit': openNote(b.dataset.id); break;
+    case 'nsave': storeNote(); closeSheet(); render(); break;
+    case 'ndel': if (confirm('Удалить заметку?')) { S.notes = S.notes.filter(x => x.id !== nId); nId = null; save(); closeSheet(); render(); toast('Заметка удалена'); } break;
+    case 'nfile': { const n = storeNote(); if (!n) { toast('Заметка пустая'); return; } render();
+      const d = new Date(n.updated), stamp = `${key(d)}`;
+      shareFile(`${fileSafe(noteTitle(n))} ${stamp}.txt`, n.text, `note-${stamp}-${hm(n.updated).replace(':','')}.txt`).then(ok => ok && toast('Заметка сохранена')); break; }
+    case 'nall': { const list = S.notes.slice().sort((a,b) => a.created - b.created); if (!list.length) return;
+      const text = list.map(n => `— ${noteDate(n.updated)} —\n${n.text}`).join('\n\n\n');
+      shareFile(`Заметки ${key(today())}.txt`, text, `notes-${key(today())}.txt`).then(ok => ok && toast('Заметки сохранены')); break; }
     case 'bklater': S.bkSnooze = key(addDays(today(),3)); save(); render(); break;
     case 'week': UI.week = b.dataset.k; render(); break;
     case 'wk': { const n = addDays(parse(UI.week), 7*+b.dataset.d); if (n <= today()) { UI.week = key(n); render(); } break; }
