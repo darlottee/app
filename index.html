@@ -792,16 +792,10 @@ function progress(){
       <button class="round-btn" data-act="wk" data-d="1" ${isCur?'disabled':''} aria-label="Следующая неделя">${I.right}</button>
     </div>
     ${resCard(UI.week, { title: isCur ? 'Желаемый результат недели' : 'Результат недели' })}
-    <div class="card chart">
-      <div class="chart-head" style="display:flex;justify-content:space-between;align-items:flex-end">
-        <div><div class="k">Выполнено за неделю</div><div class="big">${Math.round(w.pct*100)}<span>%</span></div><div class="r">${w.done} из ${w.planned} ${plural(w.planned,'задачи','задач','задач')}</div></div>
-        <div style="text-align:right"><div class="k">В среднем</div><div class="big" style="font-size:20px;color:#a3bad6">${Math.round(avg*100)}<span>%</span></div><div class="r">лучшая ${Math.round(best*100)}%</div></div>
-      </div>
-      ${svg}
-      ${(() => { const sc = weekScore(UI.week); if (sc === null) return '';
-        const v = Math.round(sc*100), c = v > 0 ? '#8fd6a3' : v < 0 ? '#ff8a80' : 'var(--label2)';
-        return `<div class="wscore" style="color:${c}">Результат недели: ${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v)}%</div>`; })()}
-    </div>
+    ${monthChart()}
+    ${(() => { const sc = weekScore(UI.week); if (sc === null) return '';
+      const v = Math.round(sc*100), c = v > 0 ? '#8fd6a3' : v < 0 ? '#ff8a80' : 'var(--label2)';
+      return `<div class="card" style="padding:14px 16px"><div class="wscore" style="color:${c};margin:0">Результат недели: ${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v)}%</div></div>`; })()}
     ${gs.length ? `
     <div class="sec"><h2>План недели</h2></div>
     <div class="card">${grid}
