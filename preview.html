@@ -344,42 +344,65 @@ textarea.field{height:auto;min-height:96px;padding:14px 0;resize:none;line-heigh
   color:#fff6dd;background:rgba(146,170,118,.22);border:1px dashed rgba(255,240,195,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .rs-add svg{width:16px;height:16px}
 
-/* ===== примерка: туман ===== */
-.fogl{position:fixed;inset:-25%;pointer-events:none;filter:blur(24px);animation:drift 60s ease-in-out infinite alternate;display:none;z-index:0}
+/* туман за карточками */
+.fogl{position:fixed;inset:-25%;pointer-events:none;filter:blur(24px);z-index:0;animation:drift 60s ease-in-out infinite alternate}
 @keyframes drift{from{transform:translate3d(-5%,0,0)}to{transform:translate3d(5%,-2%,0)}}
 .fogl.a{background:radial-gradient(38% 22% at 25% 28%,rgba(236,241,246,.85),transparent 70%),radial-gradient(45% 26% at 78% 55%,rgba(236,241,246,.75),transparent 72%),radial-gradient(50% 22% at 35% 88%,rgba(236,241,246,.8),transparent 70%)}
 .fogl.b{background:radial-gradient(30% 18% at 70% 20%,rgba(236,241,246,.75),transparent 70%),radial-gradient(40% 20% at 15% 65%,rgba(236,241,246,.7),transparent 70%);animation-duration:80s;animation-direction:alternate-reverse}
 .app{position:relative;z-index:1}
-body.fog-1 .fogl.back,body.fog-2 .fogl.back{display:block}
-body.fog-2 .fogl.front{display:block;z-index:5;opacity:.55}
-/* ===== примерка: карточки ===== */
-body.card-B .card.rc{border-radius:999px;padding:10px 10px 10px 18px}body.card-B .card.rc .tx{font-size:15px}body.card-B .card.rc .tx small{font-size:11px}body.card-B .card.rc .mk{width:30px;height:30px}
-body.card-C .card.rc{border-radius:14px;background:rgba(240,245,233,.92)!important;border:0;border-left:6px solid #8fa876;box-shadow:0 8px 24px rgba(0,0,0,.18);color:#2f3d27}
-body.card-C .card.rc .tx{color:#2f3d27}body.card-C .card.rc .tx small{color:rgba(47,61,39,.62)}body.card-C .card.rc .mk{background:rgba(47,61,39,.07);border-color:rgba(47,61,39,.15);color:#56703f}
-body.card-C .card.rc .imp i{background:rgba(47,61,39,.15)!important}body.card-C .card.rc .imp.i1 i:nth-child(1),body.card-C .card.rc .imp.i2 i:nth-child(-n+2),body.card-C .card.rc .imp.i3 i{background:#6f8a58!important}
-body.card-D .card.rc{background:rgba(146,170,118,.32)!important;backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);border:1px solid rgba(220,255,200,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 10px 30px rgba(0,0,0,.15)}
-body.card-E .resblock{display:grid;grid-template-columns:1fr 1fr;gap:10px}body.card-E .rs-h,body.card-E .rs-hint,body.card-E .rs-dn,body.card-E .rs-add{grid-column:1/-1}
-body.card-E .card.rc{flex-wrap:wrap;align-items:flex-start;margin:0;min-height:150px;border-radius:24px;align-content:space-between;padding:14px}
-body.card-E .card.rc .imp{order:1}body.card-E .card.rc .tx{order:2;flex-basis:100%;font-size:16px}body.card-E .card.rc .tx small{font-size:11px}body.card-E .card.rc .mk{order:3;width:34px;height:34px}body.card-E .card.rc .mk.yes{margin-left:auto}
-/* ===== панель примерки ===== */
-.pv{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 8px);z-index:25;width:calc(100% - 24px);max-width:460px;padding:12px;border-radius:22px;
-  background:rgba(20,22,26,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 40px rgba(0,0,0,.4);color:#eef2f6;font-size:13px}
+@media (prefers-reduced-motion:reduce){.fogl{animation:none}}
+.wscore{margin-top:10px;font-size:17px;font-weight:600;letter-spacing:-.2px}
+.mchart{padding:14px 14px 10px}
+.mchart .mh{display:flex;justify-content:space-between;align-items:flex-end}
+.mchart .k{color:var(--label2);font-size:13px}
+.mchart .big{font-family:var(--round);font-size:30px;font-weight:600;letter-spacing:-.5px;line-height:1.15}
+.mchart .sub2{color:var(--label2);font-size:13px;margin-bottom:4px}
+.mchart .msvg{display:block;width:100%;height:auto;margin-top:8px}
+
+/* витамины */
+.vit{width:100%;text-align:left;margin-bottom:12px}
+.vit .vi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:var(--label);flex:none}
+.vit .vi svg{width:22px;height:22px}
+.vit .vt{flex:1;min-width:0}.vit .vt b{display:block;font-size:16px;font-weight:600}.vit .vt small{display:block;font-size:12px;color:var(--label2);margin-top:2px}
+.vit.on,.vit .sw.on{--g1:rgba(146,170,118,.86);--g2:rgba(110,136,92,.84)}
+.va{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:20px;background:var(--bg2);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.va .vc{width:30px;height:30px;border-radius:50%;border:2px solid var(--label3);display:grid;place-items:center;flex:none}.va .vc svg{width:15px;height:15px}
+.va.on{background:linear-gradient(150deg,var(--g1),var(--g2));border-color:rgba(255,244,205,.32)}.va.on .vt small{color:rgba(255,248,228,.8)}.va.on .vi{background:rgba(255,250,232,.18);color:#fffbee}
+.va.on .vc{background:#fff8e6;border-color:transparent;color:#5d6b33}
+.vb{display:flex;align-items:center;justify-content:center;gap:10px;height:64px;border-radius:999px;font-size:17px;font-weight:600;background:var(--bg2);border:1.5px dashed rgba(255,255,255,.3);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);color:var(--label);margin-bottom:6px}
+.vb svg{width:22px;height:22px}.vb.on{background:linear-gradient(150deg,var(--g1),var(--g2));border:1.5px solid rgba(255,244,205,.35);color:#fffbee}
+.vbs{text-align:center;font-size:12px;color:rgba(255,247,228,.85);margin:0 0 12px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.top .tb{display:flex;gap:8px;align-items:center}
+.vbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1.5px dashed rgba(255,255,255,.45);color:var(--label);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.vbtn svg{width:20px;height:20px}.vbtn.on{background:linear-gradient(150deg,rgba(146,170,118,.95),rgba(110,136,92,.95));border:0;color:#fffbee}
+.vch{font-size:12px;color:rgba(226,233,240,.75);margin:-8px 4px 12px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.vd{padding:14px}.vdh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}.vdh b{font-size:15px;font-weight:600}.vdh small{font-size:12px;color:var(--label2);text-align:right}
+.vdw{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cap .pl{width:18px;height:40px;border-radius:9px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.06)}
+.cap.on .pl{background:linear-gradient(180deg,#f3e9cf 0 50%,rgba(146,170,118,.95) 50% 100%);border-color:transparent;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.cap.miss .pl{border-style:dashed;border-color:rgba(255,120,110,.55)}
+.cap.fut{opacity:.4}.cap.today .pl{border:2px solid #fff;box-shadow:0 0 0 4px rgba(255,255,255,.12)}.cap.today.on .pl{border:0}
+.cap i{font-style:normal;font-size:11px;color:var(--label2)}.cap.today i{color:var(--label);font-weight:600}
+.ve{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.sw{width:52px;height:32px;border-radius:16px;background:rgba(255,255,255,.18);position:relative;flex:none;transition:background .25s}
+.sw i{position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.3,.7,.4,1)}
+.sw.on{background:#8fae6f}.sw.on i{transform:translateX(20px)}
+
+.pv{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 8px);z-index:25;width:calc(100% - 24px);max-width:460px;padding:12px;border-radius:22px;background:rgba(20,22,26,.84);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 40px rgba(0,0,0,.4);color:#eef2f6;font-size:13px}
 .pv.min{width:auto;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
-.pv .row2{display:flex;align-items:center;gap:8px;margin-top:8px}
-.pv .row2 b{width:74px;flex:none;font-weight:600;color:rgba(238,242,246,.75)}
-.pv .ch{display:flex;gap:6px;flex-wrap:wrap}
-.pv .ch button{height:32px;min-width:38px;padding:0 10px;border-radius:16px;background:rgba(255,255,255,.1);color:#eef2f6;font-size:13px;font-weight:600}
-.pv .ch button.on{background:#e4eaf0;color:#0c1015}
-.pv .t{display:flex;justify-content:space-between;align-items:center}
-.pv .t span{font-weight:700;font-size:14px}
+.pv .t{display:flex;justify-content:space-between;align-items:center}.pv .t span{font-weight:700;font-size:14px}
+.pv .row2{display:flex;align-items:center;gap:8px;margin-top:10px}.pv .row2 b{width:74px;flex:none;font-weight:600;color:rgba(238,242,246,.75)}
+.pv .ch{display:flex;gap:6px;flex-wrap:wrap}.pv .ch button{height:32px;min-width:38px;padding:0 10px;border-radius:16px;background:rgba(255,255,255,.1);color:#eef2f6;font-size:13px;font-weight:600}.pv .ch button.on{background:#e4eaf0;color:#0c1015}
 .pv .x,.pv .open{height:30px;padding:0 12px;border-radius:15px;background:rgba(255,255,255,.12);color:#eef2f6;font-size:12px;font-weight:600}
-.pv .open{height:36px;padding:0 16px;background:rgba(20,22,26,.82);border:1px solid rgba(255,255,255,.2);box-shadow:0 8px 24px rgba(0,0,0,.35);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.pv .desc{margin-top:8px;color:rgba(238,242,246,.6);font-size:12px;line-height:16px}
-body.pv-on .app{padding-top:190px}
+.pv .open{height:36px;padding:0 16px;background:rgba(20,22,26,.84);border:1px solid rgba(255,255,255,.2)}
+.pv .desc{margin-top:8px;color:rgba(238,242,246,.65);font-size:12px;line-height:16px}
+body.pv-on .app{padding-top:170px}
 </style>
 </head>
 <body>
 <div class="bar" id="bar"></div>
+<div class="fogl a" aria-hidden="true"></div><div class="fogl b" aria-hidden="true"></div>
 <div class="app" id="app"></div>
 
 <nav class="tabs" id="tabs">
@@ -487,6 +510,7 @@ const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } cat
 if (!S.weeks || typeof S.weeks !== 'object') S.weeks = {};
 if (!S.secs || typeof S.secs !== 'object') S.secs = {};
 if (!Array.isArray(S.notes)) S.notes = [];
+if (!S.vit || typeof S.vit !== 'object') S.vit = {};
 const weekRes = w => S.weeks[w] || [];
 const X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg>';
 const IMP = ['','Низкая','Средняя','Высокая'];
@@ -495,6 +519,11 @@ const impBadge = r => `<span class="imp i${imp(r)}" title="Важность: ${I
 // невыполненные результаты недели: отмеченные ✕ и неотмеченные после конца недели
 const missOf = w => { const past = w < key(weekStart(today()));
   return weekRes(w).filter(r => r.status === 'miss' || (past && !r.status)); };
+// итог недели: +100% — всё получилось, −100% — ничего; с учётом важности
+const weekScore = w => { const items = weekRes(w); if (!items.length) return null; const past = w < key(weekStart(today()));
+  const tot = items.reduce((a,r) => a + imp(r), 0);
+  const v = items.reduce((a,r) => a + (r.status === 'done' ? imp(r) : (r.status === 'miss' || past) ? -imp(r) : 0), 0);
+  return v / tot; };
 const penalty = w => Math.min(1, missOf(w).reduce((a,r) => a + imp(r)*0.1, 0));
 function resCard(w, opts={}){
   const items = weekRes(w), cur = key(weekStart(today()));
@@ -610,12 +639,74 @@ function render(){
   app.innerHTML = (UI.tab==='home' ? home() : UI.tab==='progress' ? progress() : UI.tab==='notes' ? notes() : goals());
 }
 const header = (sub) => `<div class="top"><div>${sub?`<div class="date">${sub}</div>`:''}<h1>${TITLES[UI.tab]}<span class="jp">${JP[UI.tab]}</span></h1></div>
-  ${UI.tab==='notes' ? `<button class="round-btn" data-act="nnew" aria-label="Новая заметка">${I.plus}Заметка</button>` : `<button class="round-btn" data-act="new" aria-label="Новая цель">${I.plus}Цель</button>`}</div>`;
+  <div class="tb">${vitBtn()}${UI.tab==='notes' ? `<button class="round-btn" data-act="nnew" aria-label="Новая заметка">${I.plus}Заметка</button>` : `<button class="round-btn" data-act="new" aria-label="Новая цель">${I.plus}Цель</button>`}</div></div>`;
+
+/* ---------- месячный график (как на бирже) ---------- */
+// вклад дня: всё выполнено = +1, ничего = −1 (сегодня — только плюс), делим на число дней месяца с планом
+function monthSeries(){
+  const t = today(), tk = key(t), y = t.getFullYear(), m = t.getMonth(), n = new Date(y, m+1, 0).getDate();
+  let planDays = 0; for (let i=1;i<=n;i++) if (goalsOn(new Date(y,m,i)).length) planDays++;
+  const pts = [0]; let acc = 0;
+  for (let i=1;i<=t.getDate();i++){ const d = new Date(y,m,i), k = key(d), s = dayStats(d);
+    if (s.planned) { const doneF = s.score/s.planned, delta = k < tk ? doneF*2 - 1 : doneF; acc += delta / Math.max(1, planDays); }
+    pts.push(acc); }
+  return { pts, n, y, m, planDays };
+}
+function monthChart(){
+  const { pts, n, y, m } = monthSeries(), last = pts[pts.length-1], v = Math.round(last*100);
+  const W = 340, H = 150, padT = 14, padB = 22, left = 6, right = 8;
+  const lo = Math.min(-.1, ...pts), hi = Math.max(.1, ...pts), span = hi - lo;
+  const X = i => left + i/n*(W-left-right), Y = val => padT + (hi - val)/span*(H-padT-padB);
+  let segs = '', fillUp = '';
+  for (let i=1;i<pts.length;i++){ const up = pts[i] >= pts[i-1];
+    segs += `<line x1="${X(i-1)}" y1="${Y(pts[i-1])}" x2="${X(i)}" y2="${Y(pts[i])}" stroke="${up?'#4cd27a':'#ff5a4f'}" stroke-width="2.6" stroke-linecap="round"/>`; }
+  const area = `M${X(0)},${Y(0)} ` + pts.map((p,i)=>`L${X(i)},${Y(p)}`).join(' ') + ` L${X(pts.length-1)},${Y(0)} Z`;
+  const col = v >= 0 ? '#4cd27a' : '#ff5a4f';
+  const today = pts.length-1;
+  const ticks = [1,8,15,22,n].map(d => `<text x="${X(d)}" y="${H-5}" fill="rgba(226,233,240,.45)" font-size="10.5" text-anchor="${d===n?'end':d===1?'start':'middle'}" font-family="-apple-system,'Helvetica Neue',sans-serif">${d}</text>`).join('');
+  const hit = pts.map((p,i)=> i ? `<rect x="${X(i)-W/n/2}" y="0" width="${W/n}" height="${H}" fill="transparent" data-act="sel" data-k="${key(new Date(y,m,i))}"/>` : '').join('');
+  const sel = UI.selDay.slice(0,7) === key(new Date(y,m,1)).slice(0,7) ? +UI.selDay.slice(8) : 0;
+  return `<div class="card mchart">
+    <div class="mh"><div><div class="k">${['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'][m]}</div>
+      <div class="big" style="color:${col}">${v>0?'+':v<0?'−':''}${Math.abs(v)}%</div></div>
+      <div class="sub2">${pts.length>1 ? (()=>{ const d = Math.round((pts[today]-pts[today-1])*100); return `сегодня <b style="color:${d>=0?'#4cd27a':'#ff5a4f'}">${d>0?'+':d<0?'−':''}${Math.abs(d)}%</b>`; })() : ''}</div></div>
+    <svg viewBox="0 0 ${W} ${H}" class="msvg">
+      <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".28"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+      <line x1="${left}" x2="${W-right}" y1="${Y(0)}" y2="${Y(0)}" stroke="rgba(255,255,255,.22)" stroke-width="1" stroke-dasharray="3 4"/>
+      ${pts.length>1 ? `<path d="${area}" fill="url(#mg)"/>` : ''}
+      ${sel && sel < pts.length ? `<line x1="${X(sel)}" x2="${X(sel)}" y1="${padT-4}" y2="${H-padB}" stroke="rgba(255,255,255,.25)" stroke-width="1"/>` : ''}
+      ${segs}
+      <circle cx="${X(today)}" cy="${Y(pts[today])}" r="4.5" fill="${col}" stroke="rgba(0,0,0,.35)" stroke-width="1.5"/>
+      ${ticks}${hit}
+    </svg></div>`;
+}
+
+/* ---------- витамины ---------- */
+let VIT = 'A';
+const vitDone = k => !!S.vit[k];
+function vitStreak(){ let d = today(); if (!vitDone(key(d))) d = addDays(d,-1); let n = 0; while (vitDone(key(d)) && n < 3650) { n++; d = addDays(d,-1); } return n; }
+const PILL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.2" y="8.6" width="17.6" height="6.8" rx="3.4" transform="rotate(-45 12 12)"/><path d="M9.6 9.6l4.8 4.8"/></svg>';
+function vitBtn(){ if (VIT !== 'C' || UI.tab !== 'home') return ''; const on = vitDone(key(today()));
+  return `<button class="vbtn ${on?'on':''}" data-act="vit" aria-label="Витамины">${on ? I.check : PILL}</button>`; }
+function vitBlock(){
+  const tk = key(today()), on = vitDone(tk), t = on ? hm(S.vit[tk]) : '', st = vitStreak();
+  const streak = st > 1 ? ` · ${st} ${plural(st,'день','дня','дней')} подряд` : '';
+  const sub = on ? `выпила в ${t}${streak}` : 'выпила сегодня?';
+  if (VIT === 'A') return `<button class="vit va ${on?'on':''}" data-act="vit"><span class="vi">${PILL}</span><span class="vt"><b>Витамины</b><small>${sub}</small></span><span class="vc">${on?I.check:''}</span></button>`;
+  if (VIT === 'B') return `<button class="vit vb ${on?'on':''}" data-act="vit">${on ? `${I.check}<span>Выпила витамины · ${t}</span>` : `${PILL}<span>Выпила витамины?</span>`}</button>${on && st > 1 ? `<div class="vbs">${st} ${plural(st,'день','дня','дней')} подряд</div>` : ''}`;
+  if (VIT === 'C') return on ? '' : `<div class="vch">Витамины ещё не отмечены — кнопка с капсулой рядом с «Цель»</div>`;
+  if (VIT === 'D') { const ws = weekStart(today());
+    const caps = [...Array(7)].map((_,i) => { const d = addDays(ws,i), k = key(d), took = vitDone(k), isT = k === tk, fut = k > tk;
+      return `<button class="cap ${took?'on':''} ${isT?'today':''} ${fut?'fut':''} ${!took && k < tk ? 'miss':''}" ${isT?'data-act="vit"':''}><span class="pl"></span><i>${DAY[i]}</i></button>`; }).join('');
+    return `<div class="card vit vd"><div class="vdh"><b>Витамины</b><small>${sub}</small></div><div class="vdw">${caps}</div></div>`; }
+  if (VIT === 'E') return `<div class="card vit ve"><span class="vi">${PILL}</span><span class="vt"><b>Витамины</b><small>${sub}</small></span><button class="sw ${on?'on':''}" data-act="vit" aria-label="Выпила витамины"><i></i></button></div>`;
+  return '';
+}
 
 /* ---------- home ---------- */
 function home(){
   const t = today(), ws = weekStart(t), w = weekStats(ws), td = dayStats(t), st = streak();
-  if (weekStart(parse(UI.selDay)).getTime() !== ws.getTime()) UI.selDay = key(t);
+  if (UI.selDay.slice(0,7) !== key(t).slice(0,7) || UI.selDay > key(t) && weekStart(parse(UI.selDay)).getTime() !== ws.getTime()) UI.selDay = key(t);
   const sd = parse(UI.selDay), sk = UI.selDay, isToday = sk === key(t);
   const sub = `${DAYF[dow(t)]}, ${t.getDate()} ${MONF[t.getMonth()]}`;
 
@@ -623,7 +714,7 @@ function home(){
   const pend = weekRes(prevK).some(r => !r.status)
     ? resCard(prevK, { title:'Как прошла прошлая неделя?', hint:`${weekLabel(addDays(ws,-7))}. Отметьте, получилось ли то, что вы хотели.`, pending:true }) : '';
   const resNow = resCard(key(ws));
-  if (!S.goals.length) return `<div class="fade">${header(sub)}${pend}${resNow}
+  if (!S.goals.length) return `<div class="fade">${header(sub)}${vitBlock()}${pend}${resNow}
     <div class="card empty"><div class="ic">${ic('target')}</div><h3>Поставьте первую цель</h3>
       <p>Выберите, что и в какие дни недели вы хотите делать, — а здесь появится план на день и прогресс.</p>
       <div class="btns"><button class="btn fill" data-act="new">${I.plus} Новая цель</button><button class="btn tint" data-act="demo">Показать на примере</button></div></div></div>`;
@@ -644,7 +735,7 @@ function home(){
   const tiles = gs.length ? `<div class="tiles">${gs.map(g => tile(g, sk)).join('')}</div>`
     : `<div class="card" style="text-align:center;color:var(--label2);padding:28px">На этот день ничего не запланировано</div>`;
 
-  return `<div class="fade">${header(sub)}
+  return `<div class="fade">${header(sub)}${vitBlock()}
     <div class="card">
       <div class="hero">
         <div class="ring">${ringSVG(w.pct, 124, 8, '#dbe4ee')}
@@ -657,10 +748,7 @@ function home(){
       </div>
     </div>
     ${backupCard()}${pend}${resNow}
-    <div class="card" style="padding:14px 10px 10px">
-      <div class="week-head" style="padding:0 6px"><span class="t">${weekLabel(ws)}</span><span class="s">${I.flame}${st}</span></div>
-      <div class="week">${strip}</div>
-    </div>
+    ${monthChart()}
     <div class="sec"><h2>План на ${dayName}</h2><span style="color:var(--label2);font-size:15px" class="num">${sdS.done} из ${sdS.planned}</span></div>
     ${tiles}
   </div>`;
@@ -733,7 +821,6 @@ function progress(){
   });
   if (withPlan.length) svg += `<line x1="0" x2="${inner}" y1="${y(avg)}" y2="${y(avg)}" stroke="#7f9cc0" stroke-width="1.2" stroke-dasharray="3 4" pointer-events="none"/>`;
   svg += `</svg>`;
-  const selPen = penalty(UI.week), selMiss = missOf(UI.week);
 
   const gs = S.goals.filter(g => [...Array(7)].some((_,i)=>active(g,addDays(ws,i))));
   const tk = key(t);
@@ -768,15 +855,10 @@ function progress(){
       <button class="round-btn" data-act="wk" data-d="1" ${isCur?'disabled':''} aria-label="Следующая неделя">${I.right}</button>
     </div>
     ${resCard(UI.week, { title: isCur ? 'Желаемый результат недели' : 'Результат недели' })}
-    <div class="card chart">
-      <div class="chart-head" style="display:flex;justify-content:space-between;align-items:flex-end">
-        <div><div class="k">Выполнено за неделю</div><div class="big">${Math.round(w.pct*100)}<span>%</span></div><div class="r">${w.done} из ${w.planned} ${plural(w.planned,'задачи','задач','задач')}</div></div>
-        <div style="text-align:right"><div class="k">В среднем</div><div class="big" style="font-size:20px;color:#a3bad6">${Math.round(avg*100)}<span>%</span></div><div class="r">лучшая ${Math.round(best*100)}%</div></div>
-      </div>
-      ${svg}
-      ${maxPen ? `<div class="lgd"><span><i style="background:#dbe4ee"></i>выполнение плана</span><span><i style="background:#ff5a4f"></i>не получившиеся результаты недели</span></div>` : ''}
-      ${selPen ? `<div class="r" style="margin-top:8px;color:#ff9b93">−${Math.round(selPen*100)}% за ${selMiss.length} ${plural(selMiss.length,'результат','результата','результатов')} этой недели, которые не получились</div>` : ''}
-    </div>
+    ${monthChart()}
+    ${(() => { const sc = weekScore(UI.week); if (sc === null) return '';
+      const v = Math.round(sc*100), c = v > 0 ? '#8fd6a3' : v < 0 ? '#ff8a80' : 'var(--label2)';
+      return `<div class="card" style="padding:14px 16px"><div class="wscore" style="color:${c};margin:0">Результат недели: ${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v)}%</div></div>`; })()}
     ${gs.length ? `
     <div class="sec"><h2>План недели</h2></div>
     <div class="card">${grid}
@@ -996,6 +1078,7 @@ document.addEventListener('click', e => {
     case 'tdone': e.stopPropagation(); if (isPast(b.dataset.k)) return; if (running(g,b.dataset.k)) stopTimer(false); setSecs(g,b.dataset.k,target(g)*60); buzz(); render(); break;
     case 'treset': if (isPast(b.dataset.k)) return; if (confirm('Сбросить время и снять отметку?')) { setSecs(g,b.dataset.k,0); render(); } break;
     case 'backup': backup(); break;
+    case 'vit': { const k = key(today()); if (vitDone(k)) delete S.vit[k]; else { S.vit[k] = Date.now(); toast('Витамины отмечены'); } save(); buzz(); render(); break; }
     case 'nnew': openNote(null); break;
     case 'nedit': openNote(b.dataset.id); break;
     case 'nsave': storeNote(); closeSheet(); render(); break;
@@ -1102,40 +1185,27 @@ if (S.run) { tick(); keepAwake(true); }
 render();
 /* примерка: без service worker */
 </script>
-<div class="fogl a back"></div><div class="fogl b back"></div><div class="fogl a front"></div>
 <div class="pv" id="pv"></div>
 <script>
 (function(){
-  const FOG = [['0','Нет'],['1','1 · за карточками'],['2','2 · и поверх']];
-  const CARD = [['A','A'],['B','B'],['C','C'],['D','D'],['E','E']];
-  const CARD_DESC = {A:'A — как сейчас', B:'B — капсулы', C:'C — светлая с полоской', D:'D — прозрачное стекло', E:'E — плитки в два ряда'};
-  let st = { fog:'1', card:'A', min:false };
-  try { Object.assign(st, JSON.parse(localStorage.getItem('shag.preview.ui')||'{}')); } catch(e) {}
+  const V = ['A','B','C','D','E'];
+  const D = {A:'A — строка с галочкой: тап, и карточка становится зелёной', B:'B — большая кнопка-капсула на всю ширину', C:'C — маленькая кнопка с капсулой в шапке, рядом с «Цель»', D:'D — таблетница на неделю: капсула на каждый день, сегодняшняя нажимается', E:'E — строка с переключателем, как в настройках iPhone'};
+  let st = { v:'A', min:false }; try { Object.assign(st, JSON.parse(localStorage.getItem('shag.preview.vit')||'{}')); } catch(e) {}
   const pv = document.getElementById('pv');
-  function apply(){
-    document.body.classList.remove('fog-0','fog-1','fog-2','card-A','card-B','card-C','card-D','card-E');
-    document.body.classList.add('fog-'+st.fog, 'card-'+st.card);
-    document.body.classList.toggle('pv-on', !st.min);
-    try { localStorage.setItem('shag.preview.ui', JSON.stringify(st)); } catch(e) {}
-    if (st.min) { pv.className = 'pv min'; pv.innerHTML = `<button class="open" data-pv="open">🎨 Варианты · туман ${st.fog==='0'?'нет':st.fog} · карточки ${st.card}</button>`; return; }
-    pv.className = 'pv';
-    pv.innerHTML = `<div class="t"><span>Примерка дизайна</span><button class="x" data-pv="min">Скрыть</button></div>
-      <div class="row2"><b>Туман</b><div class="ch">${FOG.map(([v,l])=>`<button data-pv="fog" data-v="${v}" class="${st.fog===v?'on':''}">${l}</button>`).join('')}</div></div>
-      <div class="row2"><b>Карточки</b><div class="ch">${CARD.map(([v,l])=>`<button data-pv="card" data-v="${v}" class="${st.card===v?'on':''}">${l}</button>`).join('')}</div></div>
-      <div class="desc">${CARD_DESC[st.card]}. Зелёные карточки — в блоке «Желаемый результат недели» ниже. Это примерка с тестовыми данными, ваше приложение не меняется.</div>`;
-  }
+  function apply(){ VIT = st.v; document.body.classList.toggle('pv-on', !st.min); try { localStorage.setItem('shag.preview.vit', JSON.stringify(st)); } catch(e) {}
+    if (st.min) { pv.className='pv min'; pv.innerHTML = `<button class="open" data-pv="open">🎨 Витамины · вариант ${st.v}</button>`; }
+    else { pv.className='pv'; pv.innerHTML = `<div class="t"><span>Примерка: витамины</span><button class="x" data-pv="min">Скрыть</button></div>
+      <div class="row2"><b>Вариант</b><div class="ch">${V.map(v=>`<button data-pv="v" data-v="${v}" class="${st.v===v?'on':''}">${v}</button>`).join('')}</div></div>
+      <div class="desc">${D[st.v]}. Нажмите, чтобы отметить. Это тестовые данные — ваше приложение не меняется.</div>`; }
+    if (UI.tab !== 'home') UI.tab = 'home'; render(); }
   pv.addEventListener('click', e => { const b = e.target.closest('[data-pv]'); if (!b) return; e.stopPropagation();
-    const a = b.dataset.pv; if (a==='fog') st.fog = b.dataset.v; else if (a==='card') st.card = b.dataset.v; else if (a==='min') st.min = true; else if (a==='open') st.min = false;
-    apply(); if (a==='card') { const r = document.querySelector('.resblock'); r && r.scrollIntoView({behavior:'smooth', block:'center'}); } }, true);
+    const a = b.dataset.pv; if (a==='v') st.v = b.dataset.v; else if (a==='min') st.min = true; else st.min = false; apply(); scrollTo({top:0,behavior:'smooth'}); }, true);
+  if (!S.goals.length) { const btn = document.querySelector('[data-act=demo]'); if (btn) btn.click();
+    const cw = weekStart(today()); for (const k in S.weeks) if (k < key(cw)) S.weeks[k].forEach(r => r.status = r.status || 'done');
+    S.weeks[key(cw)] = [{id:'p1',text:'− 4 кг',status:null,imp:2}];
+    for (let i=1;i<=4;i++) { const d = addDays(today(),-i); if (i !== 3) S.vit[key(d)] = d.getTime() + 9*3600e3 + 12*60e3; }
+    S.lastBackup = key(today()); save(); }
   apply();
-  // тестовые данные при первом открытии
-  if (!S.goals.length) {
-    const btn = document.querySelector('[data-act=demo]'); if (btn) btn.click();
-    const cw = weekStart(today());
-    for (const k in S.weeks) if (k < key(cw)) S.weeks[k].forEach(r => r.status = r.status || 'done');
-    S.weeks[key(cw)] = [{id:'p1',text:'− 4 кг',status:null,imp:3},{id:'p2',text:'3 тренировки',status:null,imp:2},{id:'p3',text:'Позвонить бабушке',status:null,imp:1}];
-    S.lastBackup = key(today()); save(); render();
-  }
 })();
 </script>
 </body>
