@@ -358,6 +358,36 @@ textarea.field{height:auto;min-height:96px;padding:14px 0;resize:none;line-heigh
 .mchart .big{font-family:var(--round);font-size:30px;font-weight:600;letter-spacing:-.5px;line-height:1.15}
 .mchart .sub2{color:var(--label2);font-size:13px;margin-bottom:4px}
 .mchart .msvg{display:block;width:100%;height:auto;margin-top:8px}
+
+/* витамины */
+.vit{width:100%;text-align:left;margin-bottom:12px}
+.vit .vi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:var(--label);flex:none}
+.vit .vi svg{width:22px;height:22px}
+.vit .vt{flex:1;min-width:0}.vit .vt b{display:block;font-size:16px;font-weight:600}.vit .vt small{display:block;font-size:12px;color:var(--label2);margin-top:2px}
+.vit.on,.vit .sw.on{--g1:rgba(146,170,118,.86);--g2:rgba(110,136,92,.84)}
+.va{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:20px;background:var(--bg2);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.va .vc{width:30px;height:30px;border-radius:50%;border:2px solid var(--label3);display:grid;place-items:center;flex:none}.va .vc svg{width:15px;height:15px}
+.va.on{background:linear-gradient(150deg,var(--g1),var(--g2));border-color:rgba(255,244,205,.32)}.va.on .vt small{color:rgba(255,248,228,.8)}.va.on .vi{background:rgba(255,250,232,.18);color:#fffbee}
+.va.on .vc{background:#fff8e6;border-color:transparent;color:#5d6b33}
+.vb{display:flex;align-items:center;justify-content:center;gap:10px;height:64px;border-radius:999px;font-size:17px;font-weight:600;background:var(--bg2);border:1.5px dashed rgba(255,255,255,.3);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);color:var(--label);margin-bottom:6px}
+.vb svg{width:22px;height:22px}.vb.on{background:linear-gradient(150deg,var(--g1),var(--g2));border:1.5px solid rgba(255,244,205,.35);color:#fffbee}
+.vbs{text-align:center;font-size:12px;color:rgba(255,247,228,.85);margin:0 0 12px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.top .tb{display:flex;gap:8px;align-items:center}
+.vbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1.5px dashed rgba(255,255,255,.45);color:var(--label);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.vbtn svg{width:20px;height:20px}.vbtn.on{background:linear-gradient(150deg,rgba(146,170,118,.95),rgba(110,136,92,.95));border:0;color:#fffbee}
+.vch{font-size:12px;color:rgba(226,233,240,.75);margin:-8px 4px 12px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.vd{padding:14px}.vdh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:12px}.vdh b{font-size:15px;font-weight:600}.vdh small{font-size:12px;color:var(--label2);text-align:right}
+.vdw{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cap .pl{width:18px;height:40px;border-radius:9px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.06)}
+.cap.on .pl{background:linear-gradient(180deg,#f3e9cf 0 50%,rgba(146,170,118,.95) 50% 100%);border-color:transparent;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.cap.miss .pl{border-style:dashed;border-color:rgba(255,120,110,.55)}
+.cap.fut{opacity:.4}.cap.today .pl{border:2px solid #fff;box-shadow:0 0 0 4px rgba(255,255,255,.12)}.cap.today.on .pl{border:0}
+.cap i{font-style:normal;font-size:11px;color:var(--label2)}.cap.today i{color:var(--label);font-weight:600}
+.ve{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.sw{width:52px;height:32px;border-radius:16px;background:rgba(255,255,255,.18);position:relative;flex:none;transition:background .25s}
+.sw i{position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.3,.7,.4,1)}
+.sw.on{background:#8fae6f}.sw.on i{transform:translateX(20px)}
 </style>
 </head>
 <body>
@@ -470,6 +500,7 @@ const save = () => { try { localStorage.setItem(STORE, JSON.stringify(S)); } cat
 if (!S.weeks || typeof S.weeks !== 'object') S.weeks = {};
 if (!S.secs || typeof S.secs !== 'object') S.secs = {};
 if (!Array.isArray(S.notes)) S.notes = [];
+if (!S.vit || typeof S.vit !== 'object') S.vit = {};
 const weekRes = w => S.weeks[w] || [];
 const X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg>';
 const IMP = ['','Низкая','Средняя','Высокая'];
@@ -598,7 +629,7 @@ function render(){
   app.innerHTML = (UI.tab==='home' ? home() : UI.tab==='progress' ? progress() : UI.tab==='notes' ? notes() : goals());
 }
 const header = (sub) => `<div class="top"><div>${sub?`<div class="date">${sub}</div>`:''}<h1>${TITLES[UI.tab]}<span class="jp">${JP[UI.tab]}</span></h1></div>
-  ${UI.tab==='notes' ? `<button class="round-btn" data-act="nnew" aria-label="Новая заметка">${I.plus}Заметка</button>` : `<button class="round-btn" data-act="new" aria-label="Новая цель">${I.plus}Цель</button>`}</div>`;
+  <div class="tb">${vitBtn()}${UI.tab==='notes' ? `<button class="round-btn" data-act="nnew" aria-label="Новая заметка">${I.plus}Заметка</button>` : `<button class="round-btn" data-act="new" aria-label="Новая цель">${I.plus}Цель</button>`}</div></div>`;
 
 /* ---------- месячный график (как на бирже) ---------- */
 // вклад дня: всё выполнено = +1, ничего = −1 (сегодня — только плюс), делим на число дней месяца с планом
@@ -640,6 +671,28 @@ function monthChart(){
     </svg></div>`;
 }
 
+/* ---------- витамины ---------- */
+let VIT = 'E';
+const vitDone = k => !!S.vit[k];
+function vitStreak(){ let d = today(); if (!vitDone(key(d))) d = addDays(d,-1); let n = 0; while (vitDone(key(d)) && n < 3650) { n++; d = addDays(d,-1); } return n; }
+const PILL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.2" y="8.6" width="17.6" height="6.8" rx="3.4" transform="rotate(-45 12 12)"/><path d="M9.6 9.6l4.8 4.8"/></svg>';
+function vitBtn(){ if (VIT !== 'C' || UI.tab !== 'home') return ''; const on = vitDone(key(today()));
+  return `<button class="vbtn ${on?'on':''}" data-act="vit" aria-label="Витамины">${on ? I.check : PILL}</button>`; }
+function vitBlock(){
+  const tk = key(today()), on = vitDone(tk), t = on ? hm(S.vit[tk]) : '', st = vitStreak();
+  const streak = st > 1 ? ` · ${st} ${plural(st,'день','дня','дней')} подряд` : '';
+  const sub = on ? `выпила в ${t}${streak}` : 'выпила сегодня?';
+  if (VIT === 'A') return `<button class="vit va ${on?'on':''}" data-act="vit"><span class="vi">${PILL}</span><span class="vt"><b>Витамины</b><small>${sub}</small></span><span class="vc">${on?I.check:''}</span></button>`;
+  if (VIT === 'B') return `<button class="vit vb ${on?'on':''}" data-act="vit">${on ? `${I.check}<span>Выпила витамины · ${t}</span>` : `${PILL}<span>Выпила витамины?</span>`}</button>${on && st > 1 ? `<div class="vbs">${st} ${plural(st,'день','дня','дней')} подряд</div>` : ''}`;
+  if (VIT === 'C') return on ? '' : `<div class="vch">Витамины ещё не отмечены — кнопка с капсулой рядом с «Цель»</div>`;
+  if (VIT === 'D') { const ws = weekStart(today());
+    const caps = [...Array(7)].map((_,i) => { const d = addDays(ws,i), k = key(d), took = vitDone(k), isT = k === tk, fut = k > tk;
+      return `<button class="cap ${took?'on':''} ${isT?'today':''} ${fut?'fut':''} ${!took && k < tk ? 'miss':''}" ${isT?'data-act="vit"':''}><span class="pl"></span><i>${DAY[i]}</i></button>`; }).join('');
+    return `<div class="card vit vd"><div class="vdh"><b>Витамины</b><small>${sub}</small></div><div class="vdw">${caps}</div></div>`; }
+  if (VIT === 'E') return `<div class="card vit ve"><span class="vi">${PILL}</span><span class="vt"><b>Витамины</b><small>${sub}</small></span><button class="sw ${on?'on':''}" data-act="vit" aria-label="Выпила витамины"><i></i></button></div>`;
+  return '';
+}
+
 /* ---------- home ---------- */
 function home(){
   const t = today(), ws = weekStart(t), w = weekStats(ws), td = dayStats(t), st = streak();
@@ -651,7 +704,7 @@ function home(){
   const pend = weekRes(prevK).some(r => !r.status)
     ? resCard(prevK, { title:'Как прошла прошлая неделя?', hint:`${weekLabel(addDays(ws,-7))}. Отметьте, получилось ли то, что вы хотели.`, pending:true }) : '';
   const resNow = resCard(key(ws));
-  if (!S.goals.length) return `<div class="fade">${header(sub)}${pend}${resNow}
+  if (!S.goals.length) return `<div class="fade">${header(sub)}${vitBlock()}${pend}${resNow}
     <div class="card empty"><div class="ic">${ic('target')}</div><h3>Поставьте первую цель</h3>
       <p>Выберите, что и в какие дни недели вы хотите делать, — а здесь появится план на день и прогресс.</p>
       <div class="btns"><button class="btn fill" data-act="new">${I.plus} Новая цель</button><button class="btn tint" data-act="demo">Показать на примере</button></div></div></div>`;
@@ -672,7 +725,7 @@ function home(){
   const tiles = gs.length ? `<div class="tiles">${gs.map(g => tile(g, sk)).join('')}</div>`
     : `<div class="card" style="text-align:center;color:var(--label2);padding:28px">На этот день ничего не запланировано</div>`;
 
-  return `<div class="fade">${header(sub)}
+  return `<div class="fade">${header(sub)}${vitBlock()}
     <div class="card">
       <div class="hero">
         <div class="ring">${ringSVG(w.pct, 124, 8, '#dbe4ee')}
@@ -1015,6 +1068,7 @@ document.addEventListener('click', e => {
     case 'tdone': e.stopPropagation(); if (isPast(b.dataset.k)) return; if (running(g,b.dataset.k)) stopTimer(false); setSecs(g,b.dataset.k,target(g)*60); buzz(); render(); break;
     case 'treset': if (isPast(b.dataset.k)) return; if (confirm('Сбросить время и снять отметку?')) { setSecs(g,b.dataset.k,0); render(); } break;
     case 'backup': backup(); break;
+    case 'vit': { const k = key(today()); if (vitDone(k)) delete S.vit[k]; else { S.vit[k] = Date.now(); toast('Витамины отмечены'); } save(); buzz(); render(); break; }
     case 'nnew': openNote(null); break;
     case 'nedit': openNote(b.dataset.id); break;
     case 'nsave': storeNote(); closeSheet(); render(); break;
